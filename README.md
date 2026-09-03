@@ -26,4 +26,6 @@
 - `PZ_Test.bat`：啟動測試
 - `scripts/verify_mod.py`／`scripts/test_*.lua`：發版前閘門
 
+Workshop：https://steamcommunity.com/sharedfiles/filedetails/?id=3794834559（unlisted）
+
 版本號 `{PZ 版本}-{mod 版本}`，見 [CHANGELOG.md](CHANGELOG.md)。

@@ -13,7 +13,7 @@
 [list]
 [*] [b]支援版本:[/b] Build 42.20.4+
 [*] [b]單人 / 多人:[/b] 皆支援
-[*] [b]Workshop ID:[/b] （首次上傳後補上）
+[*] [b]Workshop ID:[/b] 3794834559
 [*] [b]Mod ID:[/b] MinidoracatServerPatchFor42
 [/list]
 

@@ -1,4 +1,5 @@
 version=1
+id=3794834559
 title=Minidoracat Server Patch for B42
 description=[h1]🩹 Minidoracat Server Patch for B42[/h1]
 description=[h3]By Minidoracat[/h3]
@@ -15,7 +16,7 @@ description=[h2]📋 MOD 資訊[/h2]
 description=[list]
 description=[*] [b]支援版本:[/b] Build 42.20.4+
 description=[*] [b]單人 / 多人:[/b] 皆支援
-description=[*] [b]Workshop ID:[/b] （首次上傳後補上）
+description=[*] [b]Workshop ID:[/b] 3794834559
 description=[*] [b]Mod ID:[/b] MinidoracatServerPatchFor42
 description=[/list]
 description=
