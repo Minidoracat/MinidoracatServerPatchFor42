@@ -1,0 +1,30 @@
+[h1]🩹 Minidoracat Server Patch for B42[/h1]
+[h3]By Minidoracat[/h3]
+
+[hr][/hr]
+
+[h2]✨ 這是什麼[/h2]
+[TW] PVE Minidoracat Build 42 Server #1 專用的客製補丁層。針對本服的 MOD 組合做的調整都放在這裡，內容依本服需求隨時增減。
+
+[h2]⚠️ 適用範圍[/h2]
+只為本服的 MOD 組合量身製作，不保證在其他伺服器或其他 MOD 組合下是你想要的行為。每個調整都會偵測對應的 MOD，沒有啟用就完全不動作。
+
+[h2]📋 MOD 資訊[/h2]
+[list]
+[*] [b]支援版本:[/b] Build 42.20.4+
+[*] [b]單人 / 多人:[/b] 皆支援
+[*] [b]Workshop ID:[/b] （首次上傳後補上）
+[*] [b]Mod ID:[/b] MinidoracatServerPatchFor42
+[/list]
+
+[h2]💬 意見回饋與交流[/h2]
+[list]
+[*] [url=https://discord.gg/Gur2V67]Discord 社群[/url]
+[/list]
+
+[h2]📺 關注作者[/h2]
+[list]
+[*] [url=https://www.twitch.tv/minidoracat]Twitch 直播[/url]
+[/list]
+
+[b]#Minidoracat[/b]

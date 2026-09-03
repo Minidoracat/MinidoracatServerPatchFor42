@@ -1,0 +1,116 @@
+name: upstream-watch
+
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 每天 UTC 03:17（台灣 11:17）
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 第 1 層：時間戳。這是開 issue 的唯一觸發；抓不到檔案也照開。
+      - name: 查 Steam 上游時間戳
+        id: ts
+        run: |
+          python scripts/check_upstream.py --report report.json || true
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          r = json.load(open("report.json"))
+          print("count=" + str(len(r)))
+          print("wids=" + " ".join(c["wid"] for c in r if c["status"] == "updated"))
+          PY
+
+      # 第 2、3 層：只有時間戳有變才裝 steamcmd 抓內容比對。
+      - name: 安裝 steamcmd
+        if: steps.ts.outputs.wids != ''
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -q
+          sudo apt-get install -y -q lib32gcc-s1
+          mkdir -p "$HOME/steamcmd"
+          curl -sqL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar -zx -C "$HOME/steamcmd"
+
+      - name: 匿名下載有更新的上游（每個最多重試 3 次）
+        if: steps.ts.outputs.wids != ''
+        run: |
+          mkdir -p ws
+          for wid in ${{ steps.ts.outputs.wids }}; do
+            for try in 1 2 3; do
+              "$HOME/steamcmd/steamcmd.sh" +force_install_dir "$PWD/ws" +login anonymous +workshop_download_item 108600 "$wid" +quit || true
+              if [ -d "ws/steamapps/workshop/content/108600/$wid" ]; then echo "ok $wid"; break; fi
+              echo "retry $wid ($try)"; sleep 20
+            done
+          done
+          ls ws/steamapps/workshop/content/108600 || echo "（全部下載失敗，issue 仍會開）"
+
+      - name: 檔案比對
+        if: steps.ts.outputs.wids != ''
+        run: python scripts/check_upstream.py --report report.json --source ws/steamapps/workshop/content/108600 || true
+
+      - name: 上傳完整報告
+        if: steps.ts.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: upstream-report
+          path: report.json
+
+      - name: 開 issue（每個上游一則，已存在就跳過）
+        if: steps.ts.outputs.count != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('report.json', 'utf8'));
+            const fmt = ts => ts ? new Date(ts * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC' : '（未核對）';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: 'upstream-update', per_page: 100,
+            });
+            const LIMIT = 60000;
+            for (const c of report) {
+              const key = `[upstream] ${c.wid}`;
+              if (open.some(i => i.title.startsWith(key))) { core.info(`skip ${key}: issue 已存在`); continue; }
+              const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${c.wid}`;
+              let title, parts;
+              if (c.status === 'unavailable') {
+                title = `${key} ${c.name} 可能已下架（Steam result=${c.steam_result}）`;
+                parts = [url, '', '伺服器將抓不到此 MOD，請確認 ini 的 `Mods=`／`WorkshopItems=` 是否要移除。', '',
+                         '受影響 patch：', ...c.patches.map(p => `- \`${p}\``)];
+              } else {
+                title = `${key} ${c.name} 更新於 ${fmt(c.steam_time_updated)}`;
+                parts = [url, '',
+                  '## 1. 時間戳',
+                  `- 核對過的版本：${fmt(c.acked_time_updated)}`,
+                  `- Steam 現在：${fmt(c.steam_time_updated)}`, '',
+                  '受影響 patch：', ...c.patches.map(p => `- \`${p}\``), '',
+                  `重核要點：${c.recheck || '（未填）'}`, ''];
+                const cmp = c.compare || { status: 'no_source' };
+                parts.push('## 2. 檔案清單差異');
+                if (cmp.status !== 'ok') {
+                  parts.push(`⚠ 無法比對（${cmp.status}${cmp.hint ? '：' + cmp.hint : ''}）——steamcmd 匿名下載失敗或無基線，請手動核對。`);
+                } else if (!cmp.added.length && !cmp.removed.length && !cmp.modified.length) {
+                  parts.push('**檔案零差異**（作者重傳同內容），可直接 `--ack`。');
+                } else {
+                  parts.push(`+${cmp.added.length} 新增　−${cmp.removed.length} 移除　~${cmp.modified.length} 修改`, '');
+                  for (const [k, sym] of [['added', 'A'], ['removed', 'R'], ['modified', 'M']])
+                    for (const rel of cmp[k]) parts.push(`- \`${sym}\` \`${rel}\``);
+                  parts.push('', '## 3. 關鍵檔 diff');
+                  const diffs = Object.entries(cmp.watch_diffs || {});
+                  if (!diffs.length) parts.push('watch_files 都沒變。');
+                  for (const [rel, d] of diffs) parts.push(`<details><summary><code>${rel}</code></summary>`, '', '```diff', d, '```', '</details>', '');
+                }
+                parts.push('', `完整報告：${runUrl}（artifact \`upstream-report\`）`, '',
+                  '重核完成後：`python scripts/check_upstream.py --ack ' + c.wid + '`（需本機已訂閱該 MOD），commit `upstream.json` 與 `upstream/`，再關閉本 issue。');
+              }
+              let body = parts.join('\n');
+              if (body.length > LIMIT) body = body.slice(0, LIMIT) + '\n\n… 內容過長截斷，完整 diff 見 artifact。';
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body, labels: ['upstream-update'] });
+              core.info(`opened ${title}`);
+            }
