@@ -136,6 +136,9 @@ def main():
 
     data = json.loads(UPSTREAM.read_text(encoding="utf-8"))
     ups = data["upstreams"]
+    if not ups:
+        print("OK — upstream.json 沒有登記任何上游")
+        return 0
     details = fetch_details([u["wid"] for u in ups])
     src_dir = find_source(args.source)
 
