@@ -1,0 +1,26 @@
+{
+  "_doc": "每個被 patch 的上游 Workshop MOD 登記一筆。acked_time_updated＝最後一次核對時 Steam 的 time_updated；upstream/<wid>.files.json＝當時全 MOD 檔案 hash；upstream/<wid>/<relpath>＝watch_files 快照（用來產 diff）。scripts/check_upstream.py 與 .github/workflows/upstream-watch.yml 拿它們比對；重核完跑 --ack <wid>。",
+  "upstreams": [
+    {
+      "wid": "3540297822",
+      "mod_id": "TableSaw",
+      "name": "[B42][MP]Table Saw",
+      "acked_time_updated": 1787907570,
+      "patches": [
+        "shared/Patches/TableSaw/MSP_TableSawBuild.lua",
+        "server/Patches/TableSaw/MSP_TableSawBuildCursor.lua",
+        "client/Patches/TableSaw/MSP_TableSawBuildMenu.lua"
+      ],
+      "recheck": "TableSaw_Global.lua ModTextureData1() 的配方與 sprite 清單；ISBuildTableSaw:create 的 modData 欄位（Durable／SawBladeDurable）與容器建立方式；TableSawRightClickMenu 是否仍只靠 sprite 名辨識",
+      "acked_title": "[B42][MP]Table Saw",
+      "watch_files": [
+        "mods/TableSaw/common/media/lua/shared/TableSaw_Global.lua",
+        "mods/TableSaw/common/media/lua/server/BuildingObjects/ISBuildTableSaw.lua",
+        "mods/TableSaw/common/media/lua/client/TableSawRightClickMenu.lua",
+        "mods/TableSaw/common/media/TableSaw.tiles",
+        "mods/TableSaw/common/media/sandbox-options.txt",
+        "mods/TableSaw/common/mod.info"
+      ]
+    }
+  ]
+}
