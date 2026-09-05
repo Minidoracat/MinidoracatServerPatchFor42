@@ -2,5 +2,5 @@ name=Minidoracat Server Patch for B42
 id=MinidoracatServerPatchFor42
 description=[B42]Minidoracat 伺服器專用的第三方 MOD 客製補丁層。By Minidoracat
 poster=poster.png
-modversion=42.20.4-0.1.0
+modversion=42.20.4-0.2.0
 versionMin=42.20.4
