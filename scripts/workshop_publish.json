@@ -8,5 +8,8 @@
     "changelog": "STEAM_CHANGELOG.md",
     "descriptions": {
         "english": "STEAM_DESCRIPTION.md"
+    },
+    "titles": {
+        "english": "[B42] Minidoracat 伺服器修補 Server Patch"
     }
 }
