@@ -1,4 +1,23 @@
 {
   "_doc": "每個被 patch 的上游 Workshop MOD 登記一筆。acked_time_updated＝最後一次核對時 Steam 的 time_updated；upstream/<wid>.files.json＝當時全 MOD 檔案 hash；upstream/<wid>/<relpath>＝watch_files 快照（用來產 diff）。scripts/check_upstream.py 與 .github/workflows/upstream-watch.yml 拿它們比對；重核完跑 --ack <wid>。",
-  "upstreams": []
+  "upstreams": [
+    {
+      "wid": "3402491515",
+      "mod_id": "tsarslib",
+      "name": "Tsar's Common Library",
+      "acked_time_updated": 1785731494,
+      "patches": [
+        "server/Patches/tsarslib/MSP_TuningConsumeGuard.lua"
+      ],
+      "recheck": "ATAActionsTools.lua consumeItems 的名稱正規化（__→.、find('\\.') 永遠命中）與 drainable 用量語意；ISInstallTuningVehiclePart／ISUninstallTuningVehiclePart 的 complete 是否仍是「consumeItems 後無條件 installTuning／uninstallTuning」；上游若自己補了伺服器端預檢，本補丁退場；42.20.4 目前載入 42.17/ 版本目錄，若新增更高版本目錄要改看那一份",
+      "watch_files": [
+        "mods/tsarslib/common/media/lua/shared/ATAActionsTools.lua",
+        "mods/tsarslib/42.17/media/lua/shared/TimedActions/ISInstallTuningVehiclePart.lua",
+        "mods/tsarslib/42.17/media/lua/shared/TimedActions/ISUninstallTuningVehiclePart.lua",
+        "mods/tsarslib/42.17/media/lua/client/Tuning2/ISVehicleTuning2.lua",
+        "mods/tsarslib/common/mod.info"
+      ],
+      "acked_title": "Tsar's Common Library B42"
+    }
+  ]
 }
