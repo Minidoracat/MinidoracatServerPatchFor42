@@ -137,6 +137,8 @@ def main():
     data = json.loads(UPSTREAM.read_text(encoding="utf-8"))
     ups = data["upstreams"]
     if not ups:
+        if args.report:
+            Path(args.report).write_text("[]\n", encoding="utf-8")
         print("OK — upstream.json 沒有登記任何上游")
         return 0
     details = fetch_details([u["wid"] for u in ups])
