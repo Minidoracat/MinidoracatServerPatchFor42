@@ -22,8 +22,8 @@
 
 ## 開發
 
-- `link_workshop.bat`：掛載到 `Zomboid\Workshop\` 與 `Zomboid\mods\`
-- `PZ_Test.bat`：啟動測試
+- `link_workshop.bat`：手動同步與歸檔卸載兩處實體副本
+- `PZ_Test.bat`：啟動前自動同步開發內容；資料邊界見 `../pz-family-docs/tools.md`
 - `scripts/verify_mod.py`／`scripts/test_*.lua`：發版前閘門
 
 Workshop：https://steamcommunity.com/sharedfiles/filedetails/?id=3794834559（unlisted）
