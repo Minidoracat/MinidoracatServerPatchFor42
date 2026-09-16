@@ -2,7 +2,7 @@
 
 `[TW] PVE Minidoracat Build 42 Server #1` 專用的第三方 MOD 客製補丁層（Project Zomboid Build 42）。
 
-針對本服 MOD 組合的調整都放在這裡：不改別人的 MOD、不重新發布他人內容，每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
+針對本服 MOD 組合的調整都放在這裡：補丁不改寫上游 MOD 的檔案，Workshop 發布包不夾帶上游原始檔；每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。本 repo 另在 `upstream/` 保留第三方對照快照與追蹤紀錄，其內容不適用本專案 MIT，詳見下方授權說明。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
 
 各 patch 改了什麼看各檔檔頭與 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -44,3 +44,13 @@ uv run --no-project python -B scripts/publish_workshop.py --mode all --dry-run  
 退出碼：`0` 成功／`2` 參數或取消／`3` 未登入、帳號不是擁有者／`4` 前置檢查失敗／`5` 提交失敗／`6` 已提交但回查不符。
 網頁動態封面放 `MOD/<資料夾>/workshop/preview.gif`（不在 `Contents/`，不會下載給玩家）；遊戲內上傳器仍用 `preview.png`，
 且每次會把網頁封面覆回靜態，需要動態封面時一律改用本工具發布。
+
+## 授權
+
+本專案自有的程式與文件採 [MIT](LICENSE)（Copyright (c) 2026 Minidoracat）。
+
+例外：`upstream/` 下的上游 Workshop MOD 快照為第三方著作，僅為比對上游更新而保存，
+不在 MIT 範圍內。封面素材為本專案自有產出，與程式同受 MIT。
+完整清單見 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+
+Project Zomboid 及其資產著作權屬 The Indie Stone，本專案與其無隸屬關係。
