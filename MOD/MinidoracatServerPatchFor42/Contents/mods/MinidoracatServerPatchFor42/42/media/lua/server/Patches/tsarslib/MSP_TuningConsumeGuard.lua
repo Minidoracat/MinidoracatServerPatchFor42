@@ -1,7 +1,7 @@
 --[[
 MSP_TuningConsumeGuard — Tsar's Common Library 車輛改裝安裝／拆卸在伺服器端不驗材料數量
 
-【上游】Tsar's Common Library（Workshop 3402491515，mod id tsarslib，核對版本 3.30；42.20.4 載入
+【上游】Tsar's Common Library（Workshop 3402491515，mod id tsarslib，核對版本 3.31；42.20.4 載入
 `42.17/` 版本目錄）。upstream.json 有登記，Workshop 更新時 Action 會開 issue。
 
 【缺陷】
