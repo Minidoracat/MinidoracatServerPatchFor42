@@ -18,6 +18,22 @@
         "mods/tsarslib/common/mod.info"
       ],
       "acked_title": "Tsar's Common Library B42"
+    },
+    {
+      "wid": "3770186452",
+      "mod_id": "MirageWardrobe42",
+      "name": "Mirage Wardrobe",
+      "acked_time_updated": 1786909671,
+      "patches": [
+        "client/Patches/MirageWardrobe42/MSP_WardrobeBridgeFilter.lua"
+      ],
+      "recheck": "MirageWardrobeCore.lua 的 onAppearanceBeforeModelUpdate 是否仍掛 OnTick、仍經 MirageWardrobeCore.networkAppliedBindings 遍歷遠端玩家並每 tick 呼叫 getPhysicalWearSignature；beginNetworkAppearanceRenderBridges 若已自己加距離判斷或節流，本補丁退場；tick 路徑內若開始寫入 networkAppliedBindings（目前只有 MirageWardrobeNetwork.lua 的計分板與網路 handler 會寫），要重驗寫回邏輯；若新增高於 42.0 的版本目錄要改看那一份",
+      "watch_files": [
+        "mods/MirageWardrobe/42.0/media/lua/client/MirageWardrobeCore.lua",
+        "mods/MirageWardrobe/42.0/media/lua/shared/MirageWardrobeNetwork.lua",
+        "mods/MirageWardrobe/42.0/mod.info"
+      ],
+      "acked_title": "幻装衣橱：联机幻化 / Mirage Wardrobe [B42]"
     }
   ]
 }

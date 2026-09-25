@@ -18,6 +18,7 @@
 | 路徑 | 來源 | 原始授權 |
 | --- | --- | --- |
 | `upstream/3402491515/mods/tsarslib/**` | Tsar's Common Library（Workshop [3402491515](https://steamcommunity.com/sharedfiles/filedetails/?id=3402491515)，mod id `tsarslib`，modversion 3.30；其 `mod.info` 自述為 iBrRus 作品的 B42 re-upload） | 未標示；保留原作者一切權利 |
+| `upstream/3770186452/mods/MirageWardrobe/**` | 幻装衣橱：联机幻化 / Mirage Wardrobe [B42]（Workshop [3770186452](https://steamcommunity.com/sharedfiles/filedetails/?id=3770186452)，mod id `MirageWardrobe42`，作者：vvo，modversion 1.0.0） | 未標示；保留原作者一切權利 |
 | Git 歷史中的 `upstream/3540297822/mods/TableSaw/**` | [B42][MP]Table Saw（Workshop [3540297822](https://steamcommunity.com/sharedfiles/filedetails/?id=3540297822)，作者：十叁） | 未找到明示再散布條款；保留原作者權利，不納入本專案 MIT |
 
 `upstream/<wid>.files.json` 只含上游檔案的相對路徑與 SHA-256，不含上游內容本身，

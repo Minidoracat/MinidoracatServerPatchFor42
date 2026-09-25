@@ -1,0 +1,9 @@
+name=幻装衣橱：联机幻化 / Mirage Wardrobe [B42]
+id=MirageWardrobe42
+require=\NeatUI_Framework
+poster=preview.png
+icon=icon.png
+author=vvo
+modversion=1.0.0
+versionMin=42.0.2
+description=Build 42 slot-based transmog wardrobe with configurable free, collection, carried, and nearby-clothing rules, enabled-mod source scanning, clean appearance, character preview, local live 1%-500% world zoom, outfit presets, and server-authoritative multiplayer synchronization.
