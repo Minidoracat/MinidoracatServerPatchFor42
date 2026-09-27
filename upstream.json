@@ -34,6 +34,49 @@
         "mods/MirageWardrobe/42.0/mod.info"
       ],
       "acked_title": "幻装衣橱：联机幻化 / Mirage Wardrobe [B42]"
+    },
+    {
+      "wid": "3786849936",
+      "mod_id": "ArcadiaRefillablePropaneTanks_B42",
+      "name": "Arcadia Refillable Propane Tanks",
+      "acked_time_updated": 1790391843,
+      "patches": [
+        "server/Patches/ArcadiaRefillablePropaneTanks_B42/MSP_ArcadiaDepotSpriteLoad.lua"
+      ],
+      "recheck": "核對檔 sha256 前 12 碼：Server.lua f8f45ff2eb17、Shared.lua 675103fb7bf9。Server.onLoadGridSquare 是否仍只做兩件事（對 PERSISTENT_ANCHOR_SPRITES 且 isSpriteCategoryEnabled 的物件呼叫 ensureDepot；getVehicleContainer 找 Filibuster 丙烷車做 Tank 2 初始化）且仍以 Events.LoadGridsquare.Add(Server.onLoadGridSquare) 註冊；若新增其他逐格工作或改用匿名函式註冊，本補丁要跟著改或退場；PERSISTENT_ANCHOR_SPRITES 是否仍在 shared 載入時建完（OnGameBoot 取快照）；Filibuster 判定（isFilibusterModActive）是否仍是 getFilibusterPropanePart 的前置；若新增高於 42 的版本目錄要改看那一份；作者若自己改用 MapObjects 或過濾，本補丁退場",
+      "watch_files": [
+        "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/server/ArcadiaRefillablePropane_Server.lua",
+        "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_Shared.lua",
+        "mods/ArcadiaRefillablePropaneTanks_B42/42/mod.info"
+      ],
+      "acked_title": "Refillable Propane Tanks [B42]"
+    },
+    {
+      "wid": "3171167894",
+      "mod_id": "damnlib",
+      "name": "that DAMN Library",
+      "acked_time_updated": 1790100164,
+      "patches": [
+        "server/Patches/damnlib/MSP_DamnSpawnIndex.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場",
+      "watch_files": [],
+      "acked_title": "that DAMN Library"
+    },
+    {
+      "wid": "3409472393",
+      "mod_id": "rSemiTruck",
+      "name": "rSemiTruck",
+      "acked_time_updated": 1790262678,
+      "patches": [
+        "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua"
+      ],
+      "recheck": "核對檔 common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua sha256 前 12 碼 6b4ab32f5198。LoadGridsquare 閉包是否仍在 OnInitGlobalModData 內註冊、仍先 getX／getY 再把 local guaranteedSpawns 交給全域 ipairs（探針依賴這個順序與無其他前置呼叫）、仍只在 spawnData[2]==x 且 spawnData[3]==y 時做事、不看 z；座標表元素是否仍是 {type, x, y, z, dir, alwaysActive}；檔名或路徑改了要改 UPSTREAM_FILE；42.x 版本目錄若出現同名檔要改看那一份；作者若自己改成座標索引，本補丁退場",
+      "watch_files": [
+        "mods/rSemiTruck/common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua",
+        "mods/rSemiTruck/42.20/mod.info"
+      ],
+      "acked_title": "W900 Semi-Truck [B42]"
     }
   ]
 }

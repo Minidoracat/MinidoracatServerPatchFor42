@@ -1,0 +1,9 @@
+{
+  "Sandbox_MinidoracatServerPatchFor42": "Minidoracat Server Patch",
+  "Sandbox_MinidoracatServerPatchFor42_SlimArcadiaLoad": "Lighter chunk loading: Arcadia propane depots",
+  "Sandbox_MinidoracatServerPatchFor42_SlimArcadiaLoad_tooltip": "Only runs Arcadia Refillable Propane Tanks' depot setup on tiles that can be a depot, instead of checking every tile of every loaded area. Same depots, same behavior. Takes effect after a server restart. Does nothing if that mod is not installed.",
+  "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad": "Lighter chunk loading: KI5 fixed vehicle spawns",
+  "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad_tooltip": "Only checks the fixed vehicle spawn spots of KI5 vehicles (damnlib) at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if damnlib is not installed.",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad": "Lighter chunk loading: semi truck fixed spawns",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "Only checks the guaranteed semi truck and trailer spawn spots at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if the semi truck mod is not installed."
+}

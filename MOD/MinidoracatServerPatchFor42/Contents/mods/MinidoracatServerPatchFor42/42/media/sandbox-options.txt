@@ -1,0 +1,25 @@
+VERSION = 1,
+
+option MinidoracatServerPatchFor42.SlimArcadiaLoad
+{
+    type = boolean,
+    default = true,
+    page = MinidoracatServerPatchFor42,
+    translation = MinidoracatServerPatchFor42_SlimArcadiaLoad,
+}
+
+option MinidoracatServerPatchFor42.SlimDamnlibLoad
+{
+    type = boolean,
+    default = true,
+    page = MinidoracatServerPatchFor42,
+    translation = MinidoracatServerPatchFor42_SlimDamnlibLoad,
+}
+
+option MinidoracatServerPatchFor42.SlimSemiTruckLoad
+{
+    type = boolean,
+    default = true,
+    page = MinidoracatServerPatchFor42,
+    translation = MinidoracatServerPatchFor42_SlimSemiTruckLoad,
+}

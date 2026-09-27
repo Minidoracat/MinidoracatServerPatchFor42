@@ -1,0 +1,9 @@
+{
+  "Sandbox_MinidoracatServerPatchFor42": "Minidoracat 服务器补丁",
+  "Sandbox_MinidoracatServerPatchFor42_SlimArcadiaLoad": "减轻区域加载负担：Arcadia 丙烷补充站",
+  "Sandbox_MinidoracatServerPatchFor42_SlimArcadiaLoad_tooltip": "Arcadia 可补充丙烷罐只在可能是补充站的地块上建立补充站，不再逐格检查每个加载区域。补充站与行为都不变。重启服务器后生效；没有安装该 MOD 时不做任何事。",
+  "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad": "减轻区域加载负担：KI5 车辆固定生成点",
+  "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad_tooltip": "KI5 车辆（damnlib）的固定生成点只在那些地点检查，不再逐格检查每个加载区域。生成的车辆与地点都不变。重启服务器后生效；没有安装 damnlib 时不做任何事。",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad": "减轻区域加载负担：半挂车固定生成点",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "半挂车与拖车的保证生成点只在那些地点检查，不再逐格检查每个加载区域。生成的车辆与地点都不变。重启服务器后生效；没有安装该 MOD 时不做任何事。"
+}

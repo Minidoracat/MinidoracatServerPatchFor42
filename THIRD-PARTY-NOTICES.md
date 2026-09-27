@@ -19,10 +19,16 @@
 | --- | --- | --- |
 | `upstream/3402491515/mods/tsarslib/**` | Tsar's Common Library（Workshop [3402491515](https://steamcommunity.com/sharedfiles/filedetails/?id=3402491515)，mod id `tsarslib`，modversion 3.30；其 `mod.info` 自述為 iBrRus 作品的 B42 re-upload） | 未標示；保留原作者一切權利 |
 | `upstream/3770186452/mods/MirageWardrobe/**` | 幻装衣橱：联机幻化 / Mirage Wardrobe [B42]（Workshop [3770186452](https://steamcommunity.com/sharedfiles/filedetails/?id=3770186452)，mod id `MirageWardrobe42`，作者：vvo，modversion 1.0.0） | 未標示；保留原作者一切權利 |
+| `upstream/3786849936/mods/ArcadiaRefillablePropaneTanks_B42/**` | Refillable Propane Tanks（Workshop [3786849936](https://steamcommunity.com/sharedfiles/filedetails/?id=3786849936)，mod id `ArcadiaRefillablePropaneTanks_B42`，modversion 1.9.0-beta.6） | 未標示；保留原作者一切權利 |
+| `upstream/3409472393/mods/rSemiTruck/**` | W900 Semi-Truck（Workshop [3409472393](https://steamcommunity.com/sharedfiles/filedetails/?id=3409472393)，mod id `rSemiTruck`，作者：Lexx、Wipe、Beathoven，version 1.74） | 未標示；保留原作者一切權利 |
 | Git 歷史中的 `upstream/3540297822/mods/TableSaw/**` | [B42][MP]Table Saw（Workshop [3540297822](https://steamcommunity.com/sharedfiles/filedetails/?id=3540297822)，作者：十叁） | 未找到明示再散布條款；保留原作者權利，不納入本專案 MIT |
 
 `upstream/<wid>.files.json` 只含上游檔案的相對路徑與 SHA-256，不含上游內容本身，
 但路徑清單同樣衍生自上游 MOD。
+
+that DAMN Library（Workshop [3171167894](https://steamcommunity.com/sharedfiles/filedetails/?id=3171167894)，mod id `damnlib`）
+檔頭宣告 On Lockdown（不得重新散布、重新打包或修改其檔案），因此只有 `upstream/3171167894.files.json`，
+repo 不存放它的任何檔案內容。
 
 ## 與上游互通所需的相容性實作（**在** MIT 範圍內）
 
