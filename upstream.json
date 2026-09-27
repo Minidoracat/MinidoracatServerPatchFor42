@@ -57,9 +57,10 @@
       "name": "that DAMN Library",
       "acked_time_updated": 1790100164,
       "patches": [
-        "server/Patches/damnlib/MSP_DamnSpawnIndex.lua"
+        "server/Patches/damnlib/MSP_DamnSpawnIndex.lua",
+        "server/Patches/MSP_ChunkSquareDispatch.lua"
       ],
-      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場",
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare、仍是 DAMN_Spawns.lua 唯一的 LoadGridsquare 註冊且仍在 OnInitGlobalModData 內（補丁以檔名攔下它、改由 LoadChunk 只對索引命中格子呼叫；檔名或路徑改了要改 UPSTREAM_FILE）；checkSquare 是否仍在 spawnerDebug 關閉時把「被阻擋」也 remember（:165-184，LoadChunk 時點差異的後果取決於此）；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場",
       "watch_files": [],
       "acked_title": "that DAMN Library"
     },
@@ -69,9 +70,10 @@
       "name": "rSemiTruck",
       "acked_time_updated": 1790262678,
       "patches": [
-        "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua"
+        "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua",
+        "server/Patches/MSP_ChunkSquareDispatch.lua"
       ],
-      "recheck": "核對檔 common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua sha256 前 12 碼 6b4ab32f5198。LoadGridsquare 閉包是否仍在 OnInitGlobalModData 內註冊、仍先 getX／getY 再把 local guaranteedSpawns 交給全域 ipairs（探針依賴這個順序與無其他前置呼叫）、仍只在 spawnData[2]==x 且 spawnData[3]==y 時做事、不看 z；座標表元素是否仍是 {type, x, y, z, dir, alwaysActive}；檔名或路徑改了要改 UPSTREAM_FILE；42.x 版本目錄若出現同名檔要改看那一份；作者若自己改成座標索引，本補丁退場",
+      "recheck": "核對檔 common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua sha256 前 12 碼 6b4ab32f5198。LoadGridsquare 閉包是否仍在 OnInitGlobalModData 內註冊、仍先 getX／getY 再把 local guaranteedSpawns 交給全域 ipairs（探針依賴這個順序與無其他前置呼叫）、仍只在 spawnData[2]==x 且 spawnData[3]==y 時做事、不看 z、仍是該檔唯一的 LoadGridsquare 註冊（補丁改由 LoadChunk 只對索引命中格子呼叫）；被阻擋時是否仍不寫 ModData（LoadChunk 時點差異因此只延後不漏生成）；座標表元素是否仍是 {type, x, y, z, dir, alwaysActive}；檔名或路徑改了要改 UPSTREAM_FILE；42.x 版本目錄若出現同名檔要改看那一份；作者若自己改成座標索引，本補丁退場",
       "watch_files": [
         "mods/rSemiTruck/common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua",
         "mods/rSemiTruck/42.20/mod.info"
