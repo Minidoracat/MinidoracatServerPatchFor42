@@ -1,12 +1,12 @@
 --[[
 MSP_TuningConsumeGuard — Tsar's Common Library 車輛改裝安裝／拆卸在伺服器端不驗材料數量
 
-【上游】Tsar's Common Library（Workshop 3402491515，mod id tsarslib，核對版本 3.31；42.20.4 載入
+【上游】Tsar's Common Library（Workshop 3402491515，mod id tsarslib，核對版本 3.31；42.21.0 載入
 `42.17/` 版本目錄）。upstream.json 有登記，Workshop 更新時 Action 會開 issue。
 
 【缺陷】
 改裝安裝／拆卸的材料消耗只在伺服器端執行（`LuaTimedActionNew.complete()` 於 client 不呼叫 Lua
-`complete`，`LuaTimedActionNew.java:163-167`；伺服器由 `NetTimedAction.perform()` 以
+`complete`，`LuaTimedActionNew.java:166-170`；伺服器由 `NetTimedAction.perform()` 以
 `protectedCallBoolean(complete)` 執行，`NetTimedAction.java:132-139`）。而
 `ISInstallTuningVehiclePart:complete`（42.17/…/shared/TimedActions/ISInstallTuningVehiclePart.lua:72-79）
 與 `ISUninstallTuningVehiclePart:complete`（同目錄 :56-62）都是
@@ -46,7 +46,7 @@ local PREFIX = "[MinidoracatServerPatchFor42][tsarslib]"
 -- 跳脫 `\.` 當成 `.`，pattern `.` 對任何非空字串都命中，所以「補 Base. 前綴」那一行實際上永遠不會執行
 --（正式服 log 印的就是 `SteelBarHalf` 而非 `Base.SteelBarHalf`）。這裡寫成語意相同的 `find(".")`，
 -- 刻意不「修正」它，查法才與消耗端完全一致（`ItemContainer.compareType` 對無 `.` 的型別比對短型名，
--- `ItemContainer.java:1193-1196`）。
+-- `ItemContainer.java:1197-1200`）。
 local function normalizeName(itemName)
     itemName = itemName:gsub("__", ".")
     if not itemName:find(".") then

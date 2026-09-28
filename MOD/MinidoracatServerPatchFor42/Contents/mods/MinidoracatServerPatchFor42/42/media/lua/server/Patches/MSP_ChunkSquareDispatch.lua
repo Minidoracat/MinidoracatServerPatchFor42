@@ -5,16 +5,16 @@ MSP_ChunkSquareDispatch — 以「每個 chunk 一次」的 LoadChunk 取代「�
 狀態放在全域 `MSP_ChunkSquareDispatch`，require 沒有命中快取而重跑本檔時，攔截器仍只有一個）。
 
 【攔截註冊】`claim(檔名尾段, onMatch, onDone)`：第一次呼叫時暫換 `Events.LoadGridsquare.Add`（全伺服器只換一次），
-以 `getFilenameOfClosure`（LuaManager.java:7317-7323）認出各上游檔傳進來的函式交給對應的 onMatch；onMatch 回 true＝已接手、
+以 `getFilenameOfClosure`（LuaManager.java:7341-7347）認出各上游檔傳進來的函式交給對應的 onMatch；onMatch 回 true＝已接手、
 不交給引擎，回 false＝原樣註冊。其他函式原樣轉交。同時追加一個 OnInitGlobalModData 回呼：把 `Add` 換回引擎原本的函式，
 再對每個 claim 呼叫一次 onDone(命中次數)。各補丁若各自暫換、各自還原會串成鏈：後裝的記下的「原本的 Add」其實是先裝的
 包裝，還原後 `Add` 永遠停在別人的包裝上，所以集中在這裡。時序：OnInitGlobalModData 在 OnGameBoot 之後觸發
-（GameServer.java:767,781,1481、IsoWorld.java:1995、GlobalModData.java:54），OnGameBoot 內追加的回呼排在上游之後。
+（GameServer.java:773,787,1496、IsoWorld.java:2009、GlobalModData.java:54），OnGameBoot 內追加的回呼排在上游之後。
 
 【分派】`dispatch(getIndex, upstream, prefix)` 回傳 LoadChunk 回呼；getIndex() 回傳 x → { [y] = true }（世界座標）或 nil
-（nil＝本次不處理）。引擎依據 `IsoChunk.doLoadGridsquare`（IsoChunk.java:3691-3966）：
-- :3796-3835 依 z＝minLevel..maxLevel、x＝0..7、y＝0..7 走訪，`square ~= null 且 getObjects() 非空` 時觸發 LoadGridsquare；
-- :3965 同一次載入的最後觸發一次 LoadChunk(this)。兩個事件只在這裡觸發（LuaEventManager.java:699-700 註冊）。
+（nil＝本次不處理）。引擎依據 `IsoChunk.doLoadGridsquare`（IsoChunk.java:3695-3970）：
+- :3800-3839 依 z＝minLevel..maxLevel、x＝0..7、y＝0..7 走訪，`square ~= null 且 getObjects() 非空` 時觸發 LoadGridsquare；
+- :3969 同一次載入的最後觸發一次 LoadChunk(this)。兩個事件只在這裡觸發（LuaEventManager.java:700-701 註冊）。
 所以在 LoadChunk 裡照同樣的 z→x→y 順序、同樣的條件重走「索引命中的格子」，上游收到的格子集合與順序和逐格時相同，
 只是時間點移到同一次 chunk 載入的尾端（差異見 upstream.json 各上游的 recheck 與 CHANGELOG 技術要點）。
 IsoChunk 沒有 Lua 可讀的 wx/wy（Kahlua 不暴露 instance field），chunk 世界座標由任一格子的 getX/getY 減去其 chunk 內座標得到；

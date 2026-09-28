@@ -2,7 +2,8 @@
 --   lua scripts/test_wardrobe_bridge_filter.lua
 -- 情境：上游缺席零行為＋OnGameBoot 補裝／OnTick 換掉原註冊／遠處與未載入玩家被濾掉、附近保留／
 --       呼叫後完整表還原／原版改寫子集寫回／整表被換掉不還原／原版拋錯先還原再重拋／
---       非 MP 客戶端與無本機玩家直接透傳／重複安裝不疊／形狀不符印 NOT installed 一次。
+--       非 MP 客戶端與無本機玩家直接透傳／重複安裝不疊／形狀不符只在 OnGameBoot 印 NOT installed 一次／
+--       上游 shared 先建表、client 檔晚載入時不誤報。
 local FILE = "MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/lua/client/Patches/MirageWardrobe42/MSP_WardrobeBridgeFilter.lua"
 
 local pass, fail = 0, 0
@@ -147,13 +148,26 @@ MSP_WardrobeBridgeFilter.install()
 loadPatch()
 check("idempotent: same single handler", #tickHandlers == 1 and tickHandlers[1] == registered)
 
--- 8. 形狀不符：NOT installed 只印一次、不動 OnTick
+-- 8. 形狀不符：檔案載入時不印，OnGameBoot 仍不符才印 NOT installed 一次、不動 OnTick
 resetEnv(); localPlayer = player(0, 0)
 MirageWardrobeCore = { networkAppliedBindings = {} }
 loadPatch(); MSP_WardrobeBridgeFilter.install()
+check("shape changed: silent before OnGameBoot", #printed == 0)
+bootHandlers[1](); bootHandlers[1]()
 local notInstalled = 0
 for _, line in ipairs(printed) do if line:find("NOT installed", 1, true) then notInstalled = notInstalled + 1 end end
-check("shape changed: NOT installed once", notInstalled == 1 and #tickHandlers == 0)
+check("shape changed: NOT installed once at OnGameBoot", notInstalled == 1 and #tickHandlers == 0)
+
+-- 9. 上游 shared 先建表、本檔早於上游 client 檔載入：不誤報，OnGameBoot 裝上（42.21.0 E2E 實見的順序）
+resetEnv(); localPlayer = player(0, 0)
+MirageWardrobeCore = { networkAppliedBindings = {} }
+loadPatch()
+local late = fakeUpstream(); late.networkAppliedBindings = MirageWardrobeCore.networkAppliedBindings
+MirageWardrobeCore.onAppearanceBeforeModelUpdate = late.onAppearanceBeforeModelUpdate
+Events.OnTick.Add(MirageWardrobeCore.onAppearanceBeforeModelUpdate)
+bootHandlers[1]()
+check("late client file: no NOT installed", #printed == 1 and printed[1]:find("bridge filter installed", 1, true) ~= nil)
+check("late client file: wrapper replaces original", #tickHandlers == 1 and tickHandlers[1] == MirageWardrobeCore.MSP_bridgeFilterWrapper)
 
 print(string.format("\n%d passed, %d failed", pass, fail))
 if fail > 0 then os.exit(1) end

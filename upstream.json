@@ -9,7 +9,7 @@
       "patches": [
         "server/Patches/tsarslib/MSP_TuningConsumeGuard.lua"
       ],
-      "recheck": "ATAActionsTools.lua consumeItems 的名稱正規化（__→.、find('\\.') 永遠命中）與 drainable 用量語意；ISInstallTuningVehiclePart／ISUninstallTuningVehiclePart 的 complete 是否仍是「consumeItems 後無條件 installTuning／uninstallTuning」；上游若自己補了伺服器端預檢，本補丁退場；42.20.4 目前載入 42.17/ 版本目錄，若新增更高版本目錄要改看那一份",
+      "recheck": "ATAActionsTools.lua consumeItems 的名稱正規化（__→.、find('\\.') 永遠命中）與 drainable 用量語意；ISInstallTuningVehiclePart／ISUninstallTuningVehiclePart 的 complete 是否仍是「consumeItems 後無條件 installTuning／uninstallTuning」；上游若自己補了伺服器端預檢，本補丁退場；42.21.0 目前載入 42.17/ 版本目錄，若新增更高版本目錄要改看那一份",
       "watch_files": [
         "mods/tsarslib/common/media/lua/shared/ATAActionsTools.lua",
         "mods/tsarslib/42.17/media/lua/shared/TimedActions/ISInstallTuningVehiclePart.lua",
@@ -68,7 +68,7 @@
       "wid": "3409472393",
       "mod_id": "rSemiTruck",
       "name": "rSemiTruck",
-      "acked_time_updated": 1790262678,
+      "acked_time_updated": 1790586535,
       "patches": [
         "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua",
         "server/Patches/MSP_ChunkSquareDispatch.lua"

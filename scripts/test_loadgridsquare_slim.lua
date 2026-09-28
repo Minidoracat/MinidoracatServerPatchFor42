@@ -3,9 +3,9 @@
 --   lua scripts/test_loadgridsquare_slim.lua             行為等價、邊界、隨機差分
 --   lua scripts/test_loadgridsquare_slim.lua --mutants   另對分派器／索引植入錯誤，確認隨機差分抓得到
 --   lua scripts/test_loadgridsquare_slim.lua --bench     另跑離線每 chunk 成本比較（標準 Lua，非 Kahlua、非實機）
--- 引擎模擬依 IsoChunk.doLoadGridsquare（IsoChunk.java:3691-3966）：z＝minLevel..maxLevel、x、y 走訪，只處理非 nil 且
+-- 引擎模擬依 IsoChunk.doLoadGridsquare（IsoChunk.java:3695-3970）：z＝minLevel..maxLevel、x、y 走訪，只處理非 nil 且
 -- 有物件的格子，先 MapObjects.loadGridSquare（MapObjects.java:184-218，跳過地上物品）再依註冊順序觸發 LoadGridsquare
--- （Event.java:52-64，每個 callback 各自 protectedCall）；整個 chunk 走完後觸發一次 LoadChunk（:3965）。
+-- （Event.java:52-64，每個 callback 各自 protectedCall）；整個 chunk 走完後觸發一次 LoadChunk（:3969）。
 
 local WS = "D:/SteamLibrary/steamapps/workshop/content/108600/"
 local UP = {
@@ -155,7 +155,7 @@ local function newObject(sprite, opts)
     local object = { sprite = sprite, worldItem = opts.worldItem, modData = {}, transmits = 0 }
     function object:getSprite()
         if not self.sprite then return nil end
-        -- 專用伺服器上地上物品的 sprite 是空殼，沒有名稱（IsoWorldInventoryObject.java:93,379,416）
+        -- 專用伺服器上地上物品的 sprite 是空殼，沒有名稱（IsoWorldInventoryObject.java:95,381,418）
         local name = not self.worldItem and self.sprite or nil
         return { getName = function() return name end }
     end
@@ -181,7 +181,7 @@ local function newSquare(x, y, z, objects, opts)
     return square
 end
 
--- IsoChunk：只暴露引擎給 Lua 的方法（IsoChunk.java:3103-3109 getMinLevel／getMaxLevel、:3154-3161 getGridSquare）；
+-- IsoChunk：只暴露引擎給 Lua 的方法（IsoChunk.java:3106-3112 getMinLevel／getMaxLevel、:3157-3164 getGridSquare）；
 -- wx／wy 是 instance field，Kahlua 不暴露，Lua 端讀不到
 local function newChunk(wx, wy, minLevel, maxLevel)
     local grid = {}

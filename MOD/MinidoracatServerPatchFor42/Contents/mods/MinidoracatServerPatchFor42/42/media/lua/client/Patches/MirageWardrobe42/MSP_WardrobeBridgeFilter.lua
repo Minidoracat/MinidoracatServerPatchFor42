@@ -33,8 +33,9 @@ local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeC
 
 【軟依賴】
 不 require MirageWardrobe42。載入時沒有 `MirageWardrobeCore` 就什麼都不做；為避免檔案載入順序
-早於上游，另掛 `OnGameBoot` 再試一次（冪等）。上游在但形狀不符（函式或 OnTick API 不在）時，
-印一行 NOT installed 後放棄，不猜。
+早於上游，另掛 `OnGameBoot` 再試一次（冪等）。上游 `shared/MirageWardrobeNetwork.lua:1` 先建好
+`MirageWardrobeCore` 表，本檔早於上游 client 檔載入時函式還不在，所以形狀判定只在 `OnGameBoot`（Lua 全部載入後）
+才算數：那時仍不符（函式或 OnTick API 不在）才印一行 NOT installed 後放棄，不猜。
 
 【上游更新時要重核】
 `onAppearanceBeforeModelUpdate` 是否仍掛在 OnTick 且仍經 `networkAppliedBindings` 遍歷遠端玩家；
@@ -100,7 +101,8 @@ local function makeWrapper(core, original)
 end
 
 local installed, warned = false, false
-local function install()
+-- final＝OnGameBoot 那次（全部 Lua 已載入）；檔案載入時形狀不符只可能是上游 client 檔還沒跑，不印
+local function install(final)
     if installed then return end
     local core = MirageWardrobeCore
     if type(core) ~= "table" then return end -- 上游缺席：零行為
@@ -108,7 +110,7 @@ local function install()
     local onTick = Events and Events.OnTick
     if type(original) ~= "function" or type(onTick) ~= "table" or
             type(onTick.Add) ~= "function" or type(onTick.Remove) ~= "function" then
-        if not warned then
+        if final and not warned then
             warned = true
             print(PREFIX .. " NOT installed: MirageWardrobeCore shape changed; re-check upstream.json recheck notes")
         end
@@ -129,7 +131,7 @@ end
 
 install()
 if not installed and Events and Events.OnGameBoot then
-    Events.OnGameBoot.Add(install)
+    Events.OnGameBoot.Add(function() install(true) end)
 end
 
 -- 離線測試用（scripts/test_wardrobe_bridge_filter.lua）；遊戲內不會有人引用
