@@ -23,3 +23,11 @@ option MinidoracatServerPatchFor42.SlimSemiTruckLoad
     page = MinidoracatServerPatchFor42,
     translation = MinidoracatServerPatchFor42_SlimSemiTruckLoad,
 }
+
+option MinidoracatServerPatchFor42.SlimSemiTruckRestore
+{
+    type = boolean,
+    default = true,
+    page = MinidoracatServerPatchFor42,
+    translation = MinidoracatServerPatchFor42_SlimSemiTruckRestore,
+}

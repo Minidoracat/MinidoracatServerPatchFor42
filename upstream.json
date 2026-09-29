@@ -71,9 +71,10 @@
       "acked_time_updated": 1790586535,
       "patches": [
         "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua",
-        "server/Patches/MSP_ChunkSquareDispatch.lua"
+        "server/Patches/MSP_ChunkSquareDispatch.lua",
+        "shared/Patches/rSemiTruck/MSP_SemiTruckRestoreThrottle.lua"
       ],
-      "recheck": "核對檔 common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua sha256 前 12 碼 6b4ab32f5198。LoadGridsquare 閉包是否仍在 OnInitGlobalModData 內註冊、仍先 getX／getY 再把 local guaranteedSpawns 交給全域 ipairs（探針依賴這個順序與無其他前置呼叫）、仍只在 spawnData[2]==x 且 spawnData[3]==y 時做事、不看 z、仍是該檔唯一的 LoadGridsquare 註冊（補丁改由 LoadChunk 只對索引命中格子呼叫）；被阻擋時是否仍不寫 ModData（LoadChunk 時點差異因此只延後不漏生成）；座標表元素是否仍是 {type, x, y, z, dir, alwaysActive}；檔名或路徑改了要改 UPSTREAM_FILE；42.x 版本目錄若出現同名檔要改看那一份；作者若自己改成座標索引，本補丁退場",
+      "recheck": "核對檔 common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua sha256 前 12 碼 6b4ab32f5198。LoadGridsquare 閉包是否仍在 OnInitGlobalModData 內註冊、仍先 getX／getY 再把 local guaranteedSpawns 交給全域 ipairs（探針依賴這個順序與無其他前置呼叫）、仍只在 spawnData[2]==x 且 spawnData[3]==y 時做事、不看 z、仍是該檔唯一的 LoadGridsquare 註冊（補丁改由 LoadChunk 只對索引命中格子呼叫）；被阻擋時是否仍不寫 ModData（LoadChunk 時點差異因此只延後不漏生成）；座標表元素是否仍是 {type, x, y, z, dir, alwaysActive}；檔名或路徑改了要改 UPSTREAM_FILE；42.x 版本目錄若出現同名檔要改看那一份；作者若自己改成座標索引，本補丁退場 節流補丁（MSP_SemiTruckRestoreThrottle）：核對檔 common/media/lua/server/MSW_Common_Commands.lua sha256 前 12 碼 14213b8df497（檔案大、未列 watch_files，變動看全檔 hash 差異）。該檔頂部是否仍 isClient 即 return；是否仍恰有兩個 EveryOneMinute 註冊、依序為舊存檔搬移（:2396）與 MSW_RestoreContainerCapacitiesOnLoad（:2460，補丁只包第二個）；後者是否仍要 mswCapacityRestored 與 mswCoverPartsRestored 都為真才提前結束、cover 旗標是否仍只在找到帶 ATAMultiSlotWrecker＋MSWCarCover1–5 的車時設——作者若已改成掃過一次就停或不再每遊戲分鐘全掃，補丁即可退場（已於 Workshop 討論區回報）；全 MOD 是否沒有對它呼叫 Events.EveryOneMinute.Remove（包裝後 Remove 會失效）；汽車拖車裝卸指令是否仍自行呼叫 syncCartrailerCoverParts（節流只延後載入後補同步）。",
       "watch_files": [
         "mods/rSemiTruck/common/media/lua/server/rSemiTruck.GuaranteedSpawns_mil.lua",
         "mods/rSemiTruck/42.20/mod.info"

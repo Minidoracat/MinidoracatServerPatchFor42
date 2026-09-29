@@ -5,5 +5,7 @@
   "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad": "Lighter chunk loading: KI5 fixed vehicle spawns",
   "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad_tooltip": "Only checks the fixed vehicle spawn spots of KI5 vehicles (damnlib) at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if damnlib is not installed.",
   "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad": "Lighter chunk loading: semi truck fixed spawns",
-  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "Only checks the guaranteed semi truck and trailer spawn spots at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if the semi truck mod is not installed."
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "Only checks the guaranteed semi truck and trailer spawn spots at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if the semi truck mod is not installed.",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore": "Lighter periodic scan: semi truck car trailer check",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore_tooltip": "After a restart the semi truck mod re-checks every loaded vehicle each in-game minute until it finds a car trailer. This makes it check every 30 in-game minutes instead. Car trailers loaded later get their covers restored at the next check. Takes effect after a server restart. Does nothing if the semi truck mod is not installed."
 }

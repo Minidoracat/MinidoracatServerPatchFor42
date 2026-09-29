@@ -5,5 +5,7 @@
   "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad": "減輕區域載入負擔：KI5 車輛固定生成點",
   "Sandbox_MinidoracatServerPatchFor42_SlimDamnlibLoad_tooltip": "KI5 車輛（damnlib）的固定生成點只在那些地點檢查，不再逐格檢查每個載入區域。生成的車輛與地點都不變。重新啟動伺服器後生效；沒有安裝 damnlib 時不做任何事。",
   "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad": "減輕區域載入負擔：半聯結車固定生成點",
-  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "半聯結車與拖車的保證生成點只在那些地點檢查，不再逐格檢查每個載入區域。生成的車輛與地點都不變。重新啟動伺服器後生效；沒有安裝該 MOD 時不做任何事。"
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "半聯結車與拖車的保證生成點只在那些地點檢查，不再逐格檢查每個載入區域。生成的車輛與地點都不變。重新啟動伺服器後生效；沒有安裝該 MOD 時不做任何事。",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore": "減輕週期負擔：半聯結車載入後檢查",
+  "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore_tooltip": "伺服器重啟後，半聯結車 MOD 會每遊戲分鐘重新檢查所有已載入的車輛，直到找到汽車運輸拖車為止；改成每 30 個遊戲分鐘檢查一次。之後才載入的汽車運輸拖車，車罩會在下一次檢查時補上。重新啟動伺服器後生效；沒有安裝該 MOD 時不做任何事。"
 }
