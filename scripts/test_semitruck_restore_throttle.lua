@@ -8,7 +8,6 @@
 
 local UP = "D:/SteamLibrary/steamapps/workshop/content/108600/3409472393/mods/rSemiTruck/common/media/lua/server/MSW_Common_Commands.lua"
 local PATCH = "MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/lua/shared/Patches/rSemiTruck/MSP_SemiTruckRestoreThrottle.lua"
-local MIGRATE_LINE, RESTORE_LINE = 2396, 2408 -- 上游兩個 EveryOneMinute 回呼的定義行（debug.getinfo 的 linedefined）
 
 local function readFile(path)
     local fh = io.open(path, "r")
@@ -18,6 +17,18 @@ local function readFile(path)
     return text
 end
 local UP_SOURCE = readFile(UP)
+-- 上游兩個 EveryOneMinute 回呼的定義行（debug.getinfo 的 linedefined）從上游原始碼找，不寫死行號：上游增刪無關的行
+-- 不該讓閘門變紅；找不到就是上游改了形狀，照 upstream.json 的 recheck 重核
+local function upstreamLine(text)
+    local n = 0
+    for line in UP_SOURCE:gmatch("[^\n]*\n?") do
+        n = n + 1
+        if line:find(text, 1, true) then return n end
+    end
+    error("上游 MSW_Common_Commands.lua 找不到：" .. text)
+end
+local MIGRATE_LINE = upstreamLine("Events.EveryOneMinute.Add(function()")
+local RESTORE_LINE = upstreamLine("local function MSW_RestoreContainerCapacitiesOnLoad()")
 
 local pass, fail = 0, 0
 local rawPrint, printed = print, {}

@@ -1,25 +1,25 @@
 --[[
 MSP_SemiTruckRestoreThrottle — rSemiTruck「載入後修復」回呼：沒載入過汽車運輸拖車就每遊戲分鐘全掃一次所有車輛
 
-【上游】W900 Semi-Truck [B42]（Workshop 3409472393，mod id rSemiTruck，核對版本 1.87；檔案在 `common/`）。upstream.json 有登記。
+【上游】W900 Semi-Truck [B42]（Workshop 3409472393，mod id rSemiTruck，核對版本 1.88；檔案在 `common/`）。upstream.json 有登記。
 
 【缺陷】（行號為上游 common/media/lua/server/MSW_Common_Commands.lua）
-`MSW_RestoreContainerCapacitiesOnLoad`（:2408-2459，:2460 掛 EveryOneMinute）註解寫「載入後清一次」，但要
-`mswCapacityRestored` 與 `mswCoverPartsRestored` 都為真才提前結束（:2409）；後者只在某台已載入的車有 `ATAMultiSlotWrecker`
-與 `MSWCarCover1`（:2421-2422），且 `syncCartrailerCoverParts` 回 true（五個 MSWCarCover 零件都在，:1259-1300）時才設。
-整個 session 沒載入過汽車運輸拖車時，它每遊戲分鐘走訪全部已載入車輛（`getCell():getVehicles()`，:105-167）的每個零件
-（`getPartCount`／`getPartByIndex`／`getModData`，:2428-2446）。本服一天 1 小時，每遊戲分鐘＝2.5 秒；2026-09-29 正式服
+`MSW_RestoreContainerCapacitiesOnLoad`（:2522-2573，:2574 掛 EveryOneMinute）註解寫「載入後清一次」，但要
+`mswCapacityRestored` 與 `mswCoverPartsRestored` 都為真才提前結束（:2523）；後者只在某台已載入的車有 `ATAMultiSlotWrecker`
+與 `MSWCarCover1`（:2535-2536），且 `syncCartrailerCoverParts` 回 true（五個 MSWCarCover 零件都在，:1348-1389）時才設。
+整個 session 沒載入過汽車運輸拖車時，它每遊戲分鐘走訪全部已載入車輛（`getCell():getVehicles()`，:165-227）的每個零件
+（`getPartCount`／`getPartByIndex`／`getModData`，:2542-2560）。本服一天 1 小時，每遊戲分鐘＝2.5 秒；2026-09-29 正式服
 取樣這個回呼佔主執行緒 0.70%（約每次 17 ms）；前一個已載入過汽車拖車的 session 則是零樣本。
 
 【修法】只在伺服器生效。
 - 掛點：攔截上游的事件註冊。本檔放 shared/，專用伺服器先載入全部 MOD 的 shared/ 再載入 server/（`GameServer.java:1469-1471`），
   所以一定早於 MSW_Common_Commands.lua。暫換 `Events.EveryOneMinute.Add`（`Events.X` 是一般 Lua 表，`Event.java:78-83`），
   以 `getFilenameOfClosure`（`LuaManager.java:7341-7347`）認出該檔傳進來的函式。該檔依序註冊兩個 EveryOneMinute 回呼
-  （:2396 舊存檔搬移、:2460 本回呼），把第二個換成節流版再交給引擎，其他一律原樣轉交。`OnGameBoot`（Lua 全部載入且沙盒已讀入後，
+  （:2510 舊存檔搬移、:2574 本回呼），把第二個換成節流版再交給引擎，其他一律原樣轉交。`OnGameBoot`（Lua 全部載入且沙盒已讀入後，
   `GameServer.java:1481-1496`）換回 `Add`，確認該檔恰好註冊兩個才啟用。
 - 節流：上游回呼第一次照常執行，之後每 30 個遊戲分鐘（本服 75 秒）才執行一次。執行的仍是上游函式，照原本的條件在找到汽車拖車後
   自行停下；差別只在「之後才載入的汽車拖車」要等下一次（最多 30 個遊戲分鐘）才補上車罩同步與舊容量鍵清理。汽車拖車的裝卸指令
-  本身會同步車罩（:2236、:2314），不受影響。舊存檔搬移那個回呼不動。
+  本身會同步車罩（:2326、:2428），不受影響。舊存檔搬移那個回呼不動。
 
 【為什麼不改上游】他人的 Workshop MOD，本服不重新發布；已在上游 Workshop 討論區回報並附一行修法，作者修好後本補丁即可退場。
 
