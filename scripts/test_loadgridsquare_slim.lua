@@ -602,8 +602,11 @@ check("三個上游都沒裝：零註冊、零 log", #Events.OnGameBoot.list == 
 boot(ALL, OFF, { beforePatches = addDamnSpawns })
 check("開關全關：三行 disabled、上游逐格註冊原樣、無 LoadChunk", printedMatching("disabled by sandbox option") == 3
     and #Events.LoadGridsquare.list == 3 and #Events.LoadChunk.list == 0)
-boot({ "ArcadiaRefillablePropaneTanks_B42", "B42FRUsedCarsAnimAlpha" }, ON)
-check("Filibuster 啟用：Arcadia 補丁不裝、上游原樣", printedMatching("Filibuster") == 1 and #Events.LoadGridsquare.list == 1)
+for _, truckMod in ipairs({ "B42FRUsedCarsAnimAlpha", "RVs_HeavyDuty_Trailers" }) do -- Filibuster、Arcadia F700
+    boot({ "ArcadiaRefillablePropaneTanks_B42", truckMod }, ON)
+    check("丙烷車 MOD " .. truckMod .. " 啟用：Arcadia 補丁不裝、上游原樣",
+        printedMatching("propane truck mod is active") == 1 and #Events.LoadGridsquare.list == 1)
+end
 boot({ "rSemiTruck" }, ON)
 check("rSemiTruck：Add 在 OnInitGlobalModData 後換回、上游改走 LoadChunk", #Events.LoadGridsquare.list == 0
     and #Events.LoadChunk.list == 1)

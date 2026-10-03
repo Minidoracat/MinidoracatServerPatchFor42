@@ -57,10 +57,12 @@ local function setVehicleAmount(vehicle, part, amount)
     part:setContainerContentAmount(normalized)
     local syncPart = Depot.getVirtualFilibusterTankBackingPart(part) or part
     vehicle:transmitPartModData(syncPart)
-    -- Filibuster uses this exact broadcast to keep FRPropaneTank amounts in
-    -- sync on every multiplayer client. Reuse it without replacing or
-    -- monkey-patching any function in the original mod.
-    if isServer() and not Depot.isVirtualFilibusterTankTwo(part) then
+    -- The original Filibuster implementation uses this exact broadcast.
+    -- Arcadia's independent F700 synchronizes through vehicle part modData and
+    -- must not emit a command belonging to a mod that may not be installed.
+    local profile = Depot.getPropaneVehicleProfile(vehicle)
+    if isServer() and profile and profile.usesFilibusterSync and
+        not Depot.isVirtualFilibusterTankTwo(part) then
         sendServerCommand('FR_UpdateParts', 'FR_FuelTankAmountClient', {
             partTankID = part:getId(),
             sourceVehicleID = vehicle:getId(),
@@ -170,6 +172,55 @@ function Server.completeTimedAction(player, object, itemId)
     return true
 end
 
+function Server.completeItemToDepot(player, object, itemId)
+    object = Depot.resolveDepotObject(object)
+    if not player or not object or not Server.ensureDepot(object) then
+        if player then sendError(player, "UI_RPT_NotReady") end
+        return false
+    end
+    if object:getObjectIndex() == -1 or
+        not Depot.isPlayerAdjacent(player, object) then
+        sendError(player, "UI_RPT_TooFar")
+        return false
+    end
+
+    local item = findPlayerItem(player, itemId)
+    if not item or not Depot.isPropaneSourceItem(item) then
+        sendError(player, "UI_RPT_InvalidTarget")
+        return false
+    end
+
+    local data = Depot.getData(object)
+    local capacity = Depot.getCapacity(object)
+    local stored = Depot.isInfinite() and capacity or
+        math.max(0, math.min(capacity, tonumber(data[Depot.MODDATA_AMOUNT]) or 0))
+    local plan = Depot.makeDepositPlan(item, stored, capacity)
+    if not plan or plan.transferredUnits <= Depot.MIN_TRANSFER then
+        if capacity - stored <= Depot.MIN_TRANSFER then
+            sendError(player, "UI_RPT_DepotAlreadyFull")
+        else
+            sendError(player, "UI_RPT_ItemEmpty")
+        end
+        return false
+    end
+
+    item:setUsedDelta(plan.targetFraction)
+    syncItem(item)
+    data[Depot.MODDATA_AMOUNT] = plan.storedUnits
+    data[Depot.MODDATA_REVISION] = Depot.getRevision(object) + 1
+    object:transmitModData()
+
+    sendReply(player, "depotUpdated", {
+        itemId = item:getID(),
+        itemName = item:getDisplayName(),
+        transferred = plan.transferredUnits,
+        stored = plan.storedUnits,
+        capacity = capacity,
+        direction = "item_to_depot",
+    })
+    return true
+end
+
 function Server.completeVehicleToItem(player, vehicle, partId, itemId)
     local part = Depot.getFilibusterPropanePart(vehicle, partId)
     if not player or not part then
@@ -233,7 +284,7 @@ function Server.completeItemToVehicle(player, vehicle, partId, itemId)
     end
 
     local item = findPlayerItem(player, itemId)
-    if not item or not Depot.getTargetKind(item) then
+    if not item or not Depot.isPropaneSourceItem(item) then
         sendError(player, "UI_RPT_InvalidTarget")
         return false
     end
@@ -310,6 +361,56 @@ function Server.completeDepotToVehicle(player, object, vehicle, partId)
     return true
 end
 
+function Server.completeVehicleToDepot(player, object, vehicle, partId)
+    object = Depot.resolveDepotObject(object)
+    local part = Depot.getFilibusterPropanePart(vehicle, partId)
+    if not player or not object or not part or not Server.ensureDepot(object) then
+        if player then sendError(player, "UI_RPT_NotReady") end
+        return false
+    end
+    if object:getObjectIndex() == -1 or
+        not Depot.isPlayerAdjacent(player, object) or
+        not Depot.isVehicleNearDepot(vehicle, object) then
+        sendError(player, "UI_RPT_TooFar")
+        return false
+    end
+
+    local data = Depot.getData(object)
+    local capacity = Depot.getCapacity(object)
+    local stored = Depot.isInfinite() and capacity or
+        math.max(0, math.min(capacity, tonumber(data[Depot.MODDATA_AMOUNT]) or 0))
+    local availableVehicle = Depot.getVehiclePropaneAmount(part)
+    local availableDepot = Depot.vehiclePropaneToDepotUnits(availableVehicle)
+    local transferred = math.min(
+        availableDepot,
+        math.max(0, capacity - stored)
+    )
+    if transferred <= Depot.MIN_TRANSFER then
+        if capacity - stored <= Depot.MIN_TRANSFER then
+            sendError(player, "UI_RPT_DepotAlreadyFull")
+        else
+            sendError(player, "UI_RPT_VehicleEmpty")
+        end
+        return false
+    end
+
+    setVehicleAmount(
+        vehicle,
+        part,
+        availableVehicle - Depot.depotPropaneToVehicleUnits(transferred)
+    )
+    data[Depot.MODDATA_AMOUNT] = math.min(capacity, stored + transferred)
+    data[Depot.MODDATA_REVISION] = Depot.getRevision(object) + 1
+    object:transmitModData()
+    sendReply(player, "depotUpdated", {
+        transferred = transferred,
+        stored = data[Depot.MODDATA_AMOUNT],
+        capacity = capacity,
+        direction = "vehicle_to_depot",
+    })
+    return true
+end
+
 -- Tank 2 is an integrated virtual reservoir stored in Tank 1's part modData.
 -- It exists only for the exact Filibuster propane vehicle while that mod is
 -- active, requires no second Mod ID, and begins empty exactly once.
@@ -319,9 +420,11 @@ function Server.initializeFilibusterTankTwo(vehicle)
         Depot.FILIBUSTER_PROPANE_TANK_TWO_ID
     )
     if not part or not part.getModData then return end
+    local profile = Depot.getPropaneVehicleProfile(vehicle)
+    if not profile then return end
     local data = part:getModData()
-    if data[Depot.FILIBUSTER_TANK_TWO_INITIALIZED_KEY] then return end
-    data[Depot.FILIBUSTER_TANK_TWO_INITIALIZED_KEY] = true
+    if data[profile.tankTwoInitializedKey] then return end
+    data[profile.tankTwoInitializedKey] = true
     setVehicleAmount(vehicle, part, 0)
 end
 

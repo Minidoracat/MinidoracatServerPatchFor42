@@ -3,7 +3,7 @@ ArcadiaRefillablePropane = ArcadiaRefillablePropane or {}
 local Depot = ArcadiaRefillablePropane
 
 Depot.NET_MODULE = "ArcadiaRefillablePropane"
-Depot.DATA_VERSION = 6
+Depot.DATA_VERSION = 7
 Depot.SANDBOX_NAMESPACE = "ArcadiaRefillablePropaneTanks"
 Depot.DEFAULT_CAPACITY = 2000.0
 Depot.SMALL_PROPANE_TANK_CAPACITY = 500.0
@@ -25,6 +25,8 @@ Depot.MIN_TRANSFER = 0.0001
 Depot.FILIBUSTER_WORKSHOP_ID = "3683878228"
 Depot.FILIBUSTER_MOD_ID = "B42FRUsedCarsAnimAlpha"
 Depot.FILIBUSTER_PROPANE_VEHICLE_SCRIPT = "Base.fr_fo_f700_90_propane"
+Depot.ARCADIA_PROPANE_MOD_ID = "RVs_HeavyDuty_Trailers"
+Depot.ARCADIA_PROPANE_VEHICLE_SCRIPT = "Base.ArcadiaF700Propane"
 Depot.FILIBUSTER_PROPANE_PART_ID = "FRPropaneTank"
 Depot.FILIBUSTER_PROPANE_TANK_ONE_ID = "FRPropaneTank"
 Depot.FILIBUSTER_PROPANE_TANK_TWO_ID = "FRPropaneTank2"
@@ -37,6 +39,9 @@ Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY =
     "ArcadiaRefillablePropaneTankTwoAmount"
 Depot.FILIBUSTER_TANK_TWO_INITIALIZED_KEY =
     "ArcadiaRefillablePropaneTankTwoInitialized"
+Depot.ARCADIA_TANK_TWO_AMOUNT_KEY = "RVsHeavyDutyPropaneTankTwoAmount"
+Depot.ARCADIA_TANK_TWO_INITIALIZED_KEY =
+    "RVsHeavyDutyPropaneTankTwoInitialized"
 -- Filibuster's FR_TakePropaneAction spends 80 vehicle-container units to fill
 -- one Base.PropaneTank. The depot economy intentionally values that same tank
 -- at 100 units, so every cross-system transfer must convert between scales.
@@ -269,6 +274,10 @@ function Depot.isFilibusterModActive()
     return activatedModsContains(Depot.FILIBUSTER_MOD_ID)
 end
 
+function Depot.isArcadiaPropaneVehicleModActive()
+    return activatedModsContains(Depot.ARCADIA_PROPANE_MOD_ID)
+end
+
 local function isSpriteCategoryEnabled(spriteName)
     if not spriteName then return false end
     if string.sub(spriteName, 1, 25) == "location_shop_fossoil_01_" then
@@ -436,6 +445,10 @@ function Depot.getStoredAmount(object)
     return clamp(data[Depot.MODDATA_AMOUNT], 0, Depot.getCapacity(object))
 end
 
+function Depot.getDepotMissingUnits(object)
+    return math.max(0, Depot.getCapacity(object) - Depot.getStoredAmount(object))
+end
+
 function Depot.getRevision(object)
     local data = Depot.getData(object)
     return data and math.max(0, tonumber(data[Depot.MODDATA_REVISION]) or 0) or 0
@@ -463,13 +476,55 @@ local function getVehicleScriptName(vehicle)
     return nil
 end
 
--- Optional compatibility for Filibuster Rhymes' B42 propane truck. Match the
--- exact vehicle and part reported by manoplin so unrelated container parts do
--- not become propane reservoirs merely because their content type is custom.
+-- Optional compatibility for the original Filibuster B42 propane truck and
+-- the independently packaged Arcadia F700. Exact script and part identities
+-- prevent unrelated vehicle containers from becoming propane reservoirs.
+function Depot.getPropaneVehicleProfile(vehicle)
+    if not Depot.isFilibusterPropaneTruckEnabled() then return nil end
+    local scriptName = getVehicleScriptName(vehicle)
+    if scriptName == Depot.FILIBUSTER_PROPANE_VEHICLE_SCRIPT and
+        Depot.isFilibusterModActive() then
+        return {
+            kind = "filibuster",
+            tankTwoAmountKey = Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY,
+            tankTwoInitializedKey =
+                Depot.FILIBUSTER_TANK_TWO_INITIALIZED_KEY,
+            labelKey = "UI_RPT_FilibusterTruck",
+            usesFilibusterSync = true,
+        }
+    end
+    if scriptName == Depot.ARCADIA_PROPANE_VEHICLE_SCRIPT and
+        Depot.isArcadiaPropaneVehicleModActive() then
+        return {
+            kind = "arcadia",
+            tankTwoAmountKey = Depot.ARCADIA_TANK_TWO_AMOUNT_KEY,
+            tankTwoInitializedKey = Depot.ARCADIA_TANK_TWO_INITIALIZED_KEY,
+            labelKey = "UI_RPT_ArcadiaTruck",
+            usesFilibusterSync = false,
+        }
+    end
+    return nil
+end
+
 function Depot.isFilibusterPropaneVehicle(vehicle)
-    return Depot.isFilibusterPropaneTruckEnabled() and
-        Depot.isFilibusterModActive() and
-        getVehicleScriptName(vehicle) == Depot.FILIBUSTER_PROPANE_VEHICLE_SCRIPT
+    return Depot.getPropaneVehicleProfile(vehicle) ~= nil
+end
+
+-- Generic alias for integrations written after Arcadia F700 support.
+function Depot.isSupportedPropaneVehicle(vehicle)
+    return Depot.isFilibusterPropaneVehicle(vehicle)
+end
+
+function Depot.getPropaneVehicleLabel(vehicle)
+    local profile = Depot.getPropaneVehicleProfile(vehicle)
+    return getText(profile and profile.labelKey or "UI_RPT_PropaneTruck")
+end
+
+function Depot.shouldOwnVehicleContextMenu(vehicle)
+    local profile = Depot.getPropaneVehicleProfile(vehicle)
+    -- The Arcadia F700 package already owns its direct truck menu. The depot
+    -- integration handles world-tank transfers without creating duplicates.
+    return profile ~= nil and profile.kind ~= "arcadia"
 end
 
 function Depot.isFilibusterPropanePart(part)
@@ -515,19 +570,28 @@ local function makeVirtualFilibusterTankTwo(vehicle, backingPart)
     end
     function part:getContainerContentAmount()
         local data = backingPart:getModData()
+        local profile = Depot.getPropaneVehicleProfile(vehicle)
+        local amountKey = profile and profile.tankTwoAmountKey or
+            Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY
         return clamp(
-            data[Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY],
+            data[amountKey],
             0,
             self:getContainerCapacity()
         )
     end
     function part:setContainerContentAmount(amount)
         local data = backingPart:getModData()
-        data[Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY] = clamp(
+        local profile = Depot.getPropaneVehicleProfile(vehicle)
+        local amountKey = profile and profile.tankTwoAmountKey or
+            Depot.FILIBUSTER_TANK_TWO_AMOUNT_KEY
+        local initializedKey = profile and profile.tankTwoInitializedKey or
+            Depot.FILIBUSTER_TANK_TWO_INITIALIZED_KEY
+        data[amountKey] = clamp(
             amount,
             0,
             self:getContainerCapacity()
         )
+        data[initializedKey] = true
     end
     function part:getArea()
         return backingPart.getArea and backingPart:getArea() or "FuelStorage"
@@ -644,15 +708,23 @@ Depot.REGISTERED_PROPANE_TARGETS = Depot.REGISTERED_PROPANE_TARGETS or {}
 -- Compatibility API for other mods. fullCost is expressed in this mod's
 -- depot units (a standard Base.PropaneTank is 100). Registration does not add
 -- a hard dependency and remains governed by EnableCompatiblePropaneItems.
-function Depot.registerPropaneTarget(fullType, fullCost, kind)
+function Depot.registerPropaneTarget(fullType, fullCost, kind, canSupply)
     if type(fullType) ~= "string" or fullType == "" then return false end
     fullCost = tonumber(fullCost)
     if not fullCost or fullCost <= 0 then return false end
     Depot.REGISTERED_PROPANE_TARGETS[fullType] = {
         fullCost = fullCost,
         kind = kind or "compatible_propane",
+        canSupply = canSupply ~= false,
     }
     return true
+end
+
+local function getItemIdentityText(item)
+    local fullType = item and item.getFullType and item:getFullType() or ""
+    local displayName = item and item.getDisplayName and
+        item:getDisplayName() or ""
+    return string.lower(tostring(fullType) .. " " .. tostring(displayName))
 end
 
 function Depot.getTargetKind(item)
@@ -673,7 +745,7 @@ function Depot.getTargetKind(item)
         if registered then return registered.kind end
         -- A conservative fallback catches drainable mod items explicitly
         -- named for propane. Authors can register differently named tools.
-        if string.find(string.lower(fullType or ""), "propane", 1, true) then
+        if string.find(getItemIdentityText(item), "propane", 1, true) then
             return "compatible_propane"
         end
     end
@@ -748,6 +820,22 @@ function Depot.getItemStoredUnits(item)
     return Depot.getTargetFraction(item) * fullCost
 end
 
+-- Refillable tools are valid destinations, but torches are deliberately not
+-- fuel sources. This also catches compatible Workshop torches registered
+-- under a custom kind or module name containing "torch".
+function Depot.isPropaneSourceItem(item)
+    local kind = Depot.getTargetKind(item)
+    if not kind then return false end
+    local fullType = item and item.getFullType and item:getFullType() or ""
+    local registered = Depot.REGISTERED_PROPANE_TARGETS[fullType]
+    if registered and registered.canSupply == false then return false end
+    if kind == "torch" or
+        string.find(getItemIdentityText(item), "torch", 1, true) then
+        return false
+    end
+    return Depot.getItemStoredUnits(item) > Depot.MIN_TRANSFER
+end
+
 function Depot.makeTransferPlan(item, storedAmount)
     local fullCost = Depot.getTargetFullCost(item)
     if not fullCost then return nil end
@@ -768,6 +856,41 @@ function Depot.makeTransferPlan(item, storedAmount)
         missingUnits = missingUnits,
         transferredUnits = transferredUnits,
         remainingUnits = math.max(0, availableUnits - transferredUnits),
+        fullCost = fullCost,
+    }
+end
+
+-- Plan the inverse of makeTransferPlan: remove propane from a supported
+-- carried item and add it to a finite world depot. Keeping this calculation
+-- shared lets the client preview the exact server-authoritative result.
+function Depot.makeDepositPlan(item, storedAmount, capacity)
+    if not Depot.isPropaneSourceItem(item) then return nil end
+    local fullCost = Depot.getTargetFullCost(item)
+    if not fullCost then return nil end
+
+    capacity = math.max(0, tonumber(capacity) or 0)
+    local currentStored = clamp(storedAmount, 0, capacity)
+    local currentFraction = Depot.getTargetFraction(item)
+    local availableUnits = currentFraction * fullCost
+    local missingUnits = math.max(0, capacity - currentStored)
+    local transferredUnits = math.min(availableUnits, missingUnits)
+    local targetFraction = currentFraction
+    if fullCost > 0 then
+        targetFraction = clamp(
+            (availableUnits - transferredUnits) / fullCost,
+            0,
+            1
+        )
+    end
+    if targetFraction < 0.000001 then targetFraction = 0 end
+
+    return {
+        currentFraction = currentFraction,
+        targetFraction = targetFraction,
+        availableUnits = availableUnits,
+        missingUnits = missingUnits,
+        transferredUnits = transferredUnits,
+        storedUnits = math.min(capacity, currentStored + transferredUnits),
         fullCost = fullCost,
     }
 end

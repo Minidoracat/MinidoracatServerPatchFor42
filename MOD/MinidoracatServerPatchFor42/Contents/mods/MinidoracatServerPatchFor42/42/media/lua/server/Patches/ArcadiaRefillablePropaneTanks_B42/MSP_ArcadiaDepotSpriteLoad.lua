@@ -5,11 +5,11 @@ MSP_ArcadiaDepotSpriteLoad — Arcadia Refillable Propane Tanks 每載入一格�
 42.21.0 載入 `42/`）。upstream.json 有登記，Workshop 更新時 Action 會開 issue。
 
 【缺陷】（行號為上游 42/media/lua/ 下的檔案）
-server/ArcadiaRefillablePropane_Server.lua:328-343 把 `Server.onLoadGridSquare` 掛在 LoadGridsquare。引擎對每個
+server/ArcadiaRefillablePropane_Server.lua:431-447 把 `Server.onLoadGridSquare` 掛在 LoadGridsquare。引擎對每個
 「有物件」的格子、每次載入都觸發一次（`IsoChunk.java:3803-3835`，新生成與讀檔都走這裡）。每格：`getObjects()`，
-逐物件 `getSprite():getName()` 查 `PERSISTENT_ANCHOR_SPRITES`（shared 檔 :105-121、:190-192，共 19 個固定圖塊）；
+逐物件 `getSprite():getName()` 查 `PERSISTENT_ANCHOR_SPRITES`（shared 檔 :110-126、:195-197，共 19 個固定圖塊）；
 每格另呼叫 `square:getVehicleContainer()`（Java 端掃周圍最多 4 個 chunk 的所有車做相交判定，
-`IsoGridSquare.java:9872-9893`）找 Filibuster 丙烷車。玩家探索新區時幾乎全是非目標格子。
+`IsoGridSquare.java:9872-9893`）找丙烷車。玩家探索新區時幾乎全是非目標格子。
 
 【修法】伺服器 `OnGameBoot`（全部 Lua 已載入、沙盒值已讀入，`GameServer.java:1469-1496`）時：
 - 改用引擎的圖塊分派 `MapObjects.OnLoadWithSprite(錨點圖塊名, fn, 5)`。`IsoChunk.doLoadGridsquare` 在觸發
@@ -19,9 +19,10 @@ server/ArcadiaRefillablePropane_Server.lua:328-343 把 `Server.onLoadGridSquare`
   Java 會跳過地上物品（`IsoWorldInventoryObject`）；專用伺服器上地上物品的圖塊只建空殼、不載材質、沒有名稱
   （`IsoWorldInventoryObject.java:95,381,418`），上游本來就不會把它們當補充站，結果相同。
 - 移除上游的 LoadGridsquare 註冊（`Events.LoadGridsquare.Remove`，以函式身分移除，`Event.java:106-125`）。
-- 上游那段找車只替 Filibuster 丙烷車做一次性初始化；`Depot.getFilibusterPropanePart` 第一步就要求 Filibuster MOD
-  已啟用（shared 檔 :469-473、:540-541），沒啟用時每格那次找車都是白做。所以只在 Filibuster 未啟用時安裝；
-  啟用時整個補丁不裝，上游原樣運作。
+- 上游那段找車只替支援的丙烷車做一次性的第二儲槽歸零（server 檔 :417-429）；`Depot.getFilibusterPropanePart` 第一步
+  經 `getPropaneVehicleProfile` 要求車種對應的 MOD 已啟用（Filibuster `B42FRUsedCarsAnimAlpha`、1.9.2 起加上 Arcadia F700
+  `RVs_HeavyDuty_Trailers`；shared 檔 :482-507、:604-605），兩者都沒啟用時每格那次找車都是白做。所以只在兩者都未啟用時
+  安裝；任一啟用時整個補丁不裝，上游原樣運作。
 唯一的時點差異：`addTileObject` 這類「放上新圖塊物件」的 API 也會呼叫 `MapObjects.loadGridSquare`
 （`IsoGridSquare.java:10658-10663`），新放上的補充站會在放上當下就初始化（上游要等下次載入或第一次使用，
 `ensureDepot` 在每個使用動作開頭都會先呼叫）。初始存量的抽法與上游相同，只是早一點抽。
@@ -52,12 +53,14 @@ local function install()
     local Server, Depot = ArcadiaRefillablePropaneServer, ArcadiaRefillablePropane
     if type(Server) ~= "table" or type(Server.onLoadGridSquare) ~= "function" or type(Server.ensureDepot) ~= "function"
         or type(Depot) ~= "table" or type(Depot.PERSISTENT_ANCHOR_SPRITES) ~= "table"
-        or type(Depot.isPersistentAnchorObject) ~= "function" or type(Depot.isFilibusterModActive) ~= "function" then
+        or type(Depot.isPersistentAnchorObject) ~= "function" or type(Depot.isFilibusterModActive) ~= "function"
+        or type(Depot.isArcadiaPropaneVehicleModActive) ~= "function" then
         print(PREFIX .. " sprite load NOT installed: upstream shape changed; re-check upstream.json recheck notes")
         return
     end
-    if Depot.isFilibusterModActive() then
-        print(PREFIX .. " sprite load NOT installed: Filibuster propane truck mod is active (needs the per-tile vehicle check)")
+    if Depot.isFilibusterModActive() or Depot.isArcadiaPropaneVehicleModActive() then
+        print(PREFIX .. " sprite load NOT installed: Filibuster or Arcadia F700 propane truck mod is active"
+            .. " (needs the per-tile vehicle check)")
         return
     end
     local names = {}

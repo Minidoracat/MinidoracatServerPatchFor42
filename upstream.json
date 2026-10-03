@@ -39,11 +39,11 @@
       "wid": "3786849936",
       "mod_id": "ArcadiaRefillablePropaneTanks_B42",
       "name": "Arcadia Refillable Propane Tanks",
-      "acked_time_updated": 1790391843,
+      "acked_time_updated": 1790857002,
       "patches": [
         "server/Patches/ArcadiaRefillablePropaneTanks_B42/MSP_ArcadiaDepotSpriteLoad.lua"
       ],
-      "recheck": "核對檔 sha256 前 12 碼：Server.lua f8f45ff2eb17、Shared.lua 675103fb7bf9。Server.onLoadGridSquare 是否仍只做兩件事（對 PERSISTENT_ANCHOR_SPRITES 且 isSpriteCategoryEnabled 的物件呼叫 ensureDepot；getVehicleContainer 找 Filibuster 丙烷車做 Tank 2 初始化）且仍以 Events.LoadGridsquare.Add(Server.onLoadGridSquare) 註冊；若新增其他逐格工作或改用匿名函式註冊，本補丁要跟著改或退場；PERSISTENT_ANCHOR_SPRITES 是否仍在 shared 載入時建完（OnGameBoot 取快照）；Filibuster 判定（isFilibusterModActive）是否仍是 getFilibusterPropanePart 的前置；若新增高於 42 的版本目錄要改看那一份；作者若自己改用 MapObjects 或過濾，本補丁退場",
+      "recheck": "核對檔 sha256 前 12 碼：Server.lua 88e11a53a7af、Shared.lua 3df90e57bb7b。Server.onLoadGridSquare 是否仍只做兩件事（對 PERSISTENT_ANCHOR_SPRITES 且 isSpriteCategoryEnabled 的物件呼叫 ensureDepot；getVehicleContainer 找丙烷車交給 initializeFilibusterTankTwo 做 Tank 2 初始化）且仍以 Events.LoadGridsquare.Add(Server.onLoadGridSquare) 註冊；若新增其他逐格工作或改用匿名函式註冊，本補丁要跟著改或退場；PERSISTENT_ANCHOR_SPRITES 是否仍在 shared 載入時建完（OnGameBoot 取快照）；getFilibusterPropanePart 是否仍經 getPropaneVehicleProfile 以車種 MOD 啟用為前置（1.9.2 有兩種：isFilibusterModActive、isArcadiaPropaneVehicleModActive）；新增車種或改了 MOD 判定，要把它加進補丁的不安裝條件；若新增高於 42 的版本目錄要改看那一份；作者若自己改用 MapObjects 或過濾，本補丁退場",
       "watch_files": [
         "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/server/ArcadiaRefillablePropane_Server.lua",
         "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_Shared.lua",
