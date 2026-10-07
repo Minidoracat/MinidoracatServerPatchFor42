@@ -14,6 +14,9 @@
 探針分別以遊戲的 7 個 post-process 步驟、以及再加 OPTIMIZE_GRAPH 匯入同一個 FBX，所選 mesh（依 PZ findMesh：
 先比 mesh 名，再找只掛一個 mesh 的同名節點）的頂點數、頂點座標、mesh 節點世界矩陣、每根骨頭的 offset 矩陣、
 動畫名稱集合，以及「有動畫 channel 或被蒙皮引用的節點」各自的同類祖先鏈都相同。
+mesh 節點世界矩陣另照 PZ 的算法（ProcessedAiScene.initMeshTransform :78-95）比到差 0（±0 視為相同）：只比 assimp 順序乘出來的加權和
+會漏掉位移——KI5 的 mesh 節點帶 pivot 鏈，摺疊後 PZ 算出的平移差 0.666，零件錯位；所以探針放在 PZ 的 jassimp package 內
+呼叫 JAssImpImporter.getMatrixFromAiMatrix。
 其餘節點在 PZ 是單位矩陣（ImportedSkeleton bindPose 只覆寫 aiBone、AnimationTrack 對無 keyframe 骨頭回單位矩陣），
 摺掉不影響畫面。
 """
@@ -23,6 +26,7 @@ import json
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -42,8 +46,10 @@ PZ_VERSION = (42, 21)  # 載入「≤ 此版本的最高版本目錄＋common」
 
 # FileTask_LoadMesh.loadFBX 的步驟（42.21.0 FileTask_LoadMesh.java:81-90）＋可選的額外步驟
 PROBE_JAVA = r'''
+package zombie.core.skinnedmodel.model.jassimp;
 import jassimp.*;
 import java.util.*;
+import org.lwjgl.util.vector.Matrix4f;
 public class Probe {
     static void collect(List<AiNode> out, AiNode n) { out.add(n); for (AiNode c : n.getChildren()) collect(out, c); }
     static String q(String s) { return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\""; }
@@ -74,13 +80,20 @@ public class Probe {
                     AiNode mn = null; int mi = sc.getMeshes().indexOf(m);
                     for (AiNode n : all) for (int r : n.getMeshes()) if (r == mi) mn = n;
                     double ws = 0;
+                    StringBuilder pzw = new StringBuilder("[");
                     if (mn != null) {
+                        // PZ 實際用的 mesh 世界矩陣：ProcessedAiScene.initMeshTransform（42.21.0 :78-95）逐層 getMatrixFromAiMatrix 後
+                        // Matrix4f.mul(parent, transform)。和 assimp 自己的乘法順序不同：摺疊 pivot 鏈（OPTIMIZE_GRAPH）會改變結果
+                        Matrix4f t = JAssImpImporter.getMatrixFromAiMatrix(mn.getTransform(w)), px = new Matrix4f();
+                        for (AiNode p = mn.getParent(); p != null; p = p.getParent()) { JAssImpImporter.getMatrixFromAiMatrix(p.getTransform(w), px); Matrix4f.mul(px, t, t); }
+                        float[] tf = new float[16]; t.store(java.nio.FloatBuffer.wrap(tf));
+                        for (int k = 0; k < 16; k++) pzw.append(k == 0 ? "" : ",").append(Float.floatToRawIntBits(tf[k]));
                         float[] acc = new float[16]; for (int k = 0; k < 16; k++) acc[k] = (k % 5 == 0) ? 1 : 0;
                         for (AiNode p = mn; p != null; p = p.getParent()) acc = mul(p.getTransform(w), acc);
                         for (int k = 0; k < 16; k++) ws += acc[k] * (1 + k);
                     }
                     sb.append(i++ == 0 ? "" : ",").append("{\"name\":" + q(m.getName()) + ",\"node\":" + q(mn == null ? "" : mn.getName())
-                        + ",\"nv\":" + m.getNumVertices() + ",\"vsum\":" + vs + ",\"wsum\":" + ws + ",\"hasBones\":" + m.hasBones() + ",\"bones\":[");
+                        + ",\"pzw\":" + pzw.append("]") + ",\"nv\":" + m.getNumVertices() + ",\"vsum\":" + vs + ",\"wsum\":" + ws + ",\"hasBones\":" + m.hasBones() + ",\"bones\":[");
                     int j = 0;
                     for (AiBone b : m.getBones()) {
                         double os = 0; AiMatrix4f om = b.getOffsetMatrix(w);
@@ -207,7 +220,8 @@ def scan_upstream(wid_dir):
 
 # ---------- jassimp 探針 ----------
 def run_probe(javac, game, files, extra):
-    """以遊戲附的 jre64 執行探針：native 方法綁定在載入 jassimp 類別的 class loader 上，探針必須和它同在 classpath。"""
+    """以遊戲附的 jre64 執行探針：native 方法綁定在載入 jassimp 類別的 class loader 上，探針必須和它同在 classpath；
+    探針宣告在 zombie.core.skinnedmodel.model.jassimp 套件內才能用 package-private 的 getMatrixFromAiMatrix。"""
     tmp = Path(tempfile.mkdtemp(prefix="msp_og_"))
     jar = game / "projectzomboid.jar"
     jre = game / "jre64" / "bin" / ("java.exe" if os.name == "nt" else "java")
@@ -220,7 +234,7 @@ def run_probe(javac, game, files, extra):
         out = {}
         for i in range(0, len(files), 12):
             cmd = [str(jre), "--enable-native-access=ALL-UNNAMED", f"-Djava.library.path={game}",
-                   "-cp", os.pathsep.join([str(jar), str(tmp)]), "Probe", *extra, *map(str, files[i:i + 12])]
+                   "-cp", os.pathsep.join([str(jar), str(tmp)]), "zombie.core.skinnedmodel.model.jassimp.Probe", *extra, *map(str, files[i:i + 12])]
             res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
             lines = [l for l in res.stdout.splitlines() if l.startswith("{")]
             if res.returncode != 0 or not lines:
@@ -268,6 +282,11 @@ def close(a, b):
     return abs(a - b) <= 1e-4 * max(1.0, abs(a))
 
 
+def pz_floats(bits):
+    """探針輸出的 IEEE754 位元 → 數值（±0 視為相同：只差在 0 乘以負數的符號，畫面無差）。"""
+    return [struct.unpack("<f", struct.pack("<i", x))[0] for x in bits]
+
+
 def mesh_problem(base, opt, name):
     a, b = find_mesh(base, name), find_mesh(opt, name)
     if a is None:
@@ -276,6 +295,9 @@ def mesh_problem(base, opt, name):
         return "OPTIMIZE_GRAPH 後找不到 mesh（被合併）"
     if a["nv"] != b["nv"] or a["hasBones"] != b["hasBones"] or not close(a["vsum"], b["vsum"]) or not close(a["wsum"], b["wsum"]):
         return "頂點或 mesh 節點矩陣不同"
+    diff = max(abs(x - y) for x, y in zip(pz_floats(a["pzw"]), pz_floats(b["pzw"])))
+    if diff != 0 or len(a["pzw"]) != len(b["pzw"]):
+        return f"PZ 算出的 mesh 世界矩陣不同（ProcessedAiScene.initMeshTransform；最大差 {diff:.3g}）"
     ba, bb = dict(map(tuple, a["bones"])), dict(map(tuple, b["bones"]))
     if ba.keys() != bb.keys() or any(not close(ba[k], bb[k]) for k in ba):
         return "骨頭 offset 不同"

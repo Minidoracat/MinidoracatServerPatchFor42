@@ -2,7 +2,7 @@
 
 `[TW] PVE Minidoracat Build 42 Server #1` 專用的第三方 MOD 客製補丁層（Project Zomboid Build 42）。
 
-針對本服 MOD 組合的調整都放在這裡：補丁不改寫上游 MOD 的檔案，Workshop 發布包不夾帶上游原始檔；每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。本 repo 另在 `upstream/` 保留第三方對照快照與追蹤紀錄，其內容不適用本專案 MIT，詳見下方授權說明。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
+針對本服 MOD 組合的調整都放在這裡：補丁不改寫上游 MOD 的檔案，Workshop 發布包不夾帶上游原始檔（唯一例外是下方「KI5 骨架裁剪」的本服專用模型檔，只在本機產生、不進本 repo）；每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。本 repo 另在 `upstream/` 保留第三方對照快照與追蹤紀錄，其內容不適用本專案 MIT，詳見下方授權說明。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
 
 各 patch 改了什麼看各檔檔頭與 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -12,6 +12,17 @@
 - `upstream/`：`--ack` 時寫下的全 MOD 檔案 hash 與 `watch_files` 快照。
 - `scripts/check_upstream.py`：① Steam 更新時間 ② 檔案清單差異 ③ `watch_files` diff。②③ 需上游副本（本機預設 Steam 訂閱目錄，`PZ_WORKSHOP_DIR` 或 `--source` 可改）。
 - `.github/workflows/upstream-watch.yml`：每天跑；時間戳有變才 steamcmd 下載比對並開 issue，下載失敗仍開。
+
+## KI5 骨架裁剪（本服專用模型檔）
+
+`client/Patches/MSP_KI5SkeletonTrim.lua` 把 KI5 車輛的門、引擎蓋、後車廂、車窗、裝甲模型改指只含自己那組骨架的裁剪版 FBX。
+裁剪版是 KI5 內容的衍生物（KI5 宣告 On Lockdown），依本服裁定只給本服玩家使用：
+
+- 工具在 `scripts/ki5trim/`：`build.py` 從本機 Steam 訂閱副本產生 FBX 到 `42/media/models_X/MSP_KI5Trim/`
+  （`.gitignore` 排除，不進本 repo）、Lua 資料表與 `manifest.json`；`verify.py` 用遊戲本體的 jassimp 與原檔逐位元比對。
+- repo 只收工具、Lua、資料表與 `manifest.json`（名稱、雜湊、骨頭數等中繼資料，沒有 KI5 內容）。
+- **發布前先在本機產生**：`python scripts/ki5trim/build.py` → `python scripts/ki5trim/verify.py`。`verify_mod.py` 會擋
+  「資料表引用的 FBX 不存在、雜湊不符或有多餘檔」，`publish_workshop.py` 發布前會跑它。
 
 ## 加一個新 patch
 

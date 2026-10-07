@@ -43,3 +43,6 @@ scripts/poster/posters/
 scripts/poster/candidates/
 scripts/poster/variant_*.png
 scripts/poster/*.bak
+
+# KI5 骨架裁剪的 FBX：KI5 內容的衍生物（On Lockdown），只在本機由 scripts/ki5trim/build.py 產生、隨 Workshop 上傳，不進公開 repo
+MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/models_X/MSP_KI5Trim/

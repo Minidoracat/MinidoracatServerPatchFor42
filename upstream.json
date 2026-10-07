@@ -96,6 +96,591 @@
         "mods/SimpleStatus/42.20/mod.info"
       ],
       "acked_title": "[B41|B42] Simple Status"
+    },
+    {
+      "wid": "2409333430",
+      "mod_id": "91range",
+      "name": "91 RANGE ROVER Classic",
+      "acked_time_updated": 1783017543,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'91 RANGE ROVER Classic"
+    },
+    {
+      "wid": "2566953935",
+      "mod_id": "86oshkoshP19A",
+      "name": "86 Oshkosh P19A + Military Trailers",
+      "acked_time_updated": 1768504483,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'86 Oshkosh P19A + Military Trailers"
+    },
+    {
+      "wid": "2618213077",
+      "mod_id": "82oshkoshM911",
+      "name": "82 Oshkosh M911",
+      "acked_time_updated": 1786648549,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'82 Oshkosh M911 + Military Semi-Trailers"
+    },
+    {
+      "wid": "2642541073",
+      "mod_id": "92amgeneralM998",
+      "name": "92 AM General M998 + M101A3 Trailer",
+      "acked_time_updated": 1768504542,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'92 AM General M998 + M101A3 Cargo trailer"
+    },
+    {
+      "wid": "2805630347",
+      "mod_id": "84merc",
+      "name": "84 Mercedes Benz W460",
+      "acked_time_updated": 1782411035,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'84 Mercedes Benz W460"
+    },
+    {
+      "wid": "2846036306",
+      "mod_id": "92nissanGTR",
+      "name": "92 NISSAN Skyline GT-R (R32)",
+      "acked_time_updated": 1782411086,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'92 NISSAN Skyline GT-R (R32)"
+    },
+    {
+      "wid": "2870394916",
+      "mod_id": "86fordE150",
+      "name": "86 Ford Econoline E150",
+      "acked_time_updated": 1788459129,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'86 Ford Econoline E-150 + Pop Culture vans"
+    },
+    {
+      "wid": "2900580391",
+      "mod_id": "49powerWagon",
+      "name": "49 Dodge Power Wagon Crew Cab",
+      "acked_time_updated": 1769110343,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'49 Dodge Power Wagon Crew Cab"
+    },
+    {
+      "wid": "2932549988",
+      "mod_id": "89trooper",
+      "name": "89 Isuzu Trooper",
+      "acked_time_updated": 1770923900,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'89 Isuzu Trooper"
+    },
+    {
+      "wid": "2937786633",
+      "mod_id": "69mini",
+      "name": "69 Mini Mk2",
+      "acked_time_updated": 1769712295,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'69 Mini Mk2"
+    },
+    {
+      "wid": "2942793445",
+      "mod_id": "90pierceArrow",
+      "name": "90 Pierce Arrow Pumper and Ladder Trucks",
+      "acked_time_updated": 1786039953,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'90 Pierce Arrow Pumper and Ladder Trucks"
+    },
+    {
+      "wid": "2952802178",
+      "mod_id": "90fordF350ambulance",
+      "name": "90 Ford F350 Ambulance Type 1",
+      "acked_time_updated": 1779388362,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'90 Ford F350 Ambulance"
+    },
+    {
+      "wid": "2962175696",
+      "mod_id": "92fordCVPI",
+      "name": "92 Ford Crown Victoria Police Interceptor",
+      "acked_time_updated": 1778782910,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'92 Ford Crown Victoria"
+    },
+    {
+      "wid": "2969343830",
+      "mod_id": "93fordElgin",
+      "name": "93 Ford CF8000 Elgin Street Sweeper",
+      "acked_time_updated": 1782411166,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'93 Ford CF8000 Elgin Street Sweeper"
+    },
+    {
+      "wid": "3005903549",
+      "mod_id": "63beetle",
+      "name": "63 Volkswagen 1300 Beetle",
+      "acked_time_updated": 1769712525,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'63 Volkswagen 1300 Beetle"
+    },
+    {
+      "wid": "3008795514",
+      "mod_id": "91geoMetro",
+      "name": "91 Geo Metro",
+      "acked_time_updated": 1769712566,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'91 Geo Metro"
+    },
+    {
+      "wid": "3026723485",
+      "mod_id": "67gt500",
+      "name": "67 Shelby GT500 + Eleanor",
+      "acked_time_updated": 1770923942,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'67 Shelby GT500 + Eleanor"
+    },
+    {
+      "wid": "3034636011",
+      "mod_id": "89dodgeCaravan",
+      "name": "89 Dodge Caravan",
+      "acked_time_updated": 1770923986,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'89 Dodge Caravan"
+    },
+    {
+      "wid": "3041122351",
+      "mod_id": "63Type2Van",
+      "name": "63 Volkswagen Type 2 Van",
+      "acked_time_updated": 1770924025,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'63 Volkswagen Type 2 Van"
+    },
+    {
+      "wid": "3052360250",
+      "mod_id": "87toyotaMR2",
+      "name": "87 Toyota MR2",
+      "acked_time_updated": 1770924070,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'87 Toyota MR2"
+    },
+    {
+      "wid": "3073430075",
+      "mod_id": "93fordF350",
+      "name": "93 Ford F-Series",
+      "acked_time_updated": 1779993371,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'93 Ford F-Series"
+    },
+    {
+      "wid": "3088951320",
+      "mod_id": "93fordTaurus",
+      "name": "93 Ford Taurus",
+      "acked_time_updated": 1770924108,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'93 Ford Taurus"
+    },
+    {
+      "wid": "3110913021",
+      "mod_id": "90bmwE30",
+      "name": "90 BMW 3 Series (E30)",
+      "acked_time_updated": 1775758380,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'90 BMW 3 Series (E30)"
+    },
+    {
+      "wid": "3152529790",
+      "mod_id": "93chevySuburban",
+      "name": "93 Chevrolet Suburban / Silverado",
+      "acked_time_updated": 1790877906,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'93 Chevrolet Suburban / Silverado"
+    },
+    {
+      "wid": "3161951724",
+      "mod_id": "76chevyKseries",
+      "name": "76 Chevrolet K series",
+      "acked_time_updated": 1789115226,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'76 Chevrolet K Series"
+    },
+    {
+      "wid": "3196180339",
+      "mod_id": "87chevySuburban",
+      "name": "87 Chevrolet Suburban",
+      "acked_time_updated": 1788459086,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'87 Chevrolet Suburban"
+    },
+    {
+      "wid": "3213391371",
+      "mod_id": "75grandPrix",
+      "name": "75 Pontiac Grand Prix",
+      "acked_time_updated": 1783017455,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'75 Pontiac Grand Prix"
+    },
+    {
+      "wid": "3292659291",
+      "mod_id": "89volvo200",
+      "name": "89 Volvo 200 Series",
+      "acked_time_updated": 1769712597,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'89 Volvo 200 Series"
+    },
+    {
+      "wid": "3330403100",
+      "mod_id": "KI5trailers",
+      "name": "Trailers!",
+      "acked_time_updated": 1769712678,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "Trailers!"
+    },
+    {
+      "wid": "3379334330",
+      "mod_id": "82porsche911",
+      "name": "82 Porsche 911",
+      "acked_time_updated": 1775153656,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'82 Porsche 911"
+    },
+    {
+      "wid": "3413704851",
+      "mod_id": "85chevyCaprice",
+      "name": "85 Chevrolet Caprice / Impala",
+      "acked_time_updated": 1770319578,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'85 Chevrolet Caprice / Impala"
+    },
+    {
+      "wid": "3413706334",
+      "mod_id": "85pontiacParisienne",
+      "name": "85 Pontiac Parisienne",
+      "acked_time_updated": 1770319688,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'85 Pontiac Parisienne"
+    },
+    {
+      "wid": "3418252689",
+      "mod_id": "85buickLeSabre",
+      "name": "85 Buick LeSabre",
+      "acked_time_updated": 1770319654,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'85 Buick LeSabre"
+    },
+    {
+      "wid": "3418253716",
+      "mod_id": "85oldsmobileDelta88",
+      "name": "85 Oldsmobile Delta 88",
+      "acked_time_updated": 1770319616,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'85 Oldsmobile Delta 88"
+    },
+    {
+      "wid": "3428008364",
+      "mod_id": "86chevyCUCV",
+      "name": "86 Chevrolet CUCVs + M101A2 Trailer",
+      "acked_time_updated": 1787857623,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'86 Chevrolet CUCVs + M101A2 Trailer"
+    },
+    {
+      "wid": "3570973322",
+      "mod_id": "89defender",
+      "name": "89 LAND ROVER Defender",
+      "acked_time_updated": 1770319397,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'89 LAND ROVER Defender"
+    },
+    {
+      "wid": "3592777775",
+      "mod_id": "84cadillacDeVille",
+      "name": "84 Cadillac DeVille",
+      "acked_time_updated": 1767904617,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'84 Cadillac DeVille"
+    },
+    {
+      "wid": "3596903773",
+      "mod_id": "84buickElectra",
+      "name": "84 Buick Electra",
+      "acked_time_updated": 1767904583,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'84 Buick Electra"
+    },
+    {
+      "wid": "3614034284",
+      "mod_id": "85chevyStepVan",
+      "name": "85 Chevrolet Step-Van",
+      "acked_time_updated": 1769110233,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'85 Chevrolet Step-Van"
+    },
+    {
+      "wid": "3631989559",
+      "mod_id": "69charger",
+      "name": "69 Dodge Charger",
+      "acked_time_updated": 1786648418,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'69 Dodge Charger"
+    },
+    {
+      "wid": "3642935062",
+      "mod_id": "70roadRunner",
+      "name": "70 Plymouth Road Runner",
+      "acked_time_updated": 1775758199,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'70 Plymouth Road Runner"
+    },
+    {
+      "wid": "3647735736",
+      "mod_id": "95impreza",
+      "name": "95 Subaru Impreza WRX STI",
+      "acked_time_updated": 1768589204,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'95 Subaru Impreza WRX STI"
+    },
+    {
+      "wid": "3647736504",
+      "mod_id": "96lancerEVO",
+      "name": "96 Mitsubishi Lancer EVO IV",
+      "acked_time_updated": 1768589291,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "'96 Mitsubishi Lancer EVO IV"
+    },
+    {
+      "wid": "3652371248",
+      "mod_id": "lockMartM577",
+      "name": "Lock-Mart Industries M577",
+      "acked_time_updated": 1770319314,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "Lock-Mart Industries M577"
+    },
+    {
+      "wid": "3670064951",
+      "mod_id": "KI5campers",
+      "name": "Campers!",
+      "acked_time_updated": 1789673072,
+      "patches": [
+        "client/Patches/MSP_KI5SkeletonTrim.lua",
+        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "watch_files": [],
+      "acked_title": "Campers!"
     }
   ]
 }

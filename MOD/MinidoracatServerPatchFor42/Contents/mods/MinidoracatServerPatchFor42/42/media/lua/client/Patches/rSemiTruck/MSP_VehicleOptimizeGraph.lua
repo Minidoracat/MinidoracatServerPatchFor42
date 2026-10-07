@@ -11,8 +11,9 @@ upstream.json 有登記，Workshop 更新時 Action 會開 issue。
 （ImportedSkeleton.java:56-75）。assimp 匯入 FBX 會替有 pre-rotation 的節點補 `$AssimpFbx$` 輔助節點，
 這些輔助節點和純 mesh 節點因此也算進骨頭：W900 車頭每個門／引擎蓋 49 根（真正的骨架 6 根），
 半聯結拖車 28 根、箱型車後門 30 根。成本＝每幀 Update 次數 × 骨頭數。
-KI5 系列同樣能套用（每個 FBX 只多 2 根），實測每台只省 0～4 µs，不值得背幾十個上游的重核負擔，所以不收；
-要擴大時把上游登記進 upstream.json（patches 列本檔）再跑 `scripts/check_optimize_graph.py --write`。
+KI5 系列不得擴大到本檔：KI5 的 mesh 節點帶 `$AssimpFbx$` pivot 鏈，OPTIMIZE_GRAPH 把它摺成一個節點後，
+PZ 自己逐層相乘的 mesh 世界矩陣（ProcessedAiScene.java:78-95）和摺疊前不同，平移差 0.666，零件會錯位
+（363 個 KI5 模型群組全數如此）。KI5 改走 `client/Patches/MSP_KI5SkeletonTrim.lua`。
 
 【修法】
 在任何車輛模型匯入前，對白名單裡的模型腳本呼叫 `ModelScript:Load`，body 只寫
@@ -22,7 +23,7 @@ postProcess 在 :90-91）；`ModelManager.getLoadedModel` 把它傳進 `loadMode
 不被蒙皮引用的節點摺掉。被摺的節點在 PZ 本來就是單位矩陣（bindPose 只覆寫 aiBone，ImportedSkeleton.java:114-156；
 無 keyframe 的骨頭 AnimationTrack.java:929-931 回單位矩陣），畫面不變。
 白名單由 `scripts/check_optimize_graph.py` 產生：用遊戲本體的 jassimp 匯入同一個 FBX 開／不開這個步驟，
-逐 mesh 比頂點、mesh 節點矩陣、骨頭 offset、動畫與動畫節點階層，全等才收。執行期再守三件事：模型腳本存在、
+逐 mesh 比頂點、mesh 節點矩陣（含照 PZ 算法逐層相乘的結果，差 0 才收）、骨頭 offset、動畫與動畫節點階層，全等才收。執行期再守三件事：模型腳本存在、
 仍非 static、mesh 仍是白名單記的那一個；有一項不符就不動它。
 
 時機：本檔在 client Lua 載入時執行。Core.ResetLua 先 `ScriptManager.Load` 再載 Lua（Core.java:3931、3949；

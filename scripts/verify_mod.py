@@ -25,6 +25,7 @@
  11. CHANGELOG 洩漏掃描     — bullet 會被整段貼到公開的 Workshop 更新說明；掃基礎設施
                            樣式（/home/ 路徑、IP、SteamID64、ssh、主機名）當最後防線。
                            攻擊配方與玩家識別資訊機器認不出來，靠撰寫規則（AGENTS.md）
+ 本 repo：KI5 骨架裁剪 FBX — 資料表引用的 FBX（本機產生、不進 git）都在且 SHA-256 與 manifest 相同、沒有多餘的檔
 
 新增檢查時：同步把對應的坑記進 AGENTS.md 踩坑錄，並依「踩坑進化協議」回流到
 pz-mod-template（見 AGENTS.md）。
@@ -543,6 +544,47 @@ else:
                         _glyph_problems.append(f"{lang}/{name} {key}：" + "；".join(bad))
     _label = GLYPH_LABEL + (f"（CN 另有 {len(_cn_missing)} 個漢字原版字型就缺，不計）" if _cn_missing else "")
     fail(_label, _glyph_problems) if _glyph_problems else ok(_label)
+
+# ---- 本 repo：KI5 骨架裁剪的 FBX 已產生且與 manifest 相符 ----
+# 裁剪後的 FBX 是 KI5 內容的衍生物（On Lockdown），不進公開 repo，只在本機由 scripts/ki5trim/build.py 產生到 MOD 樹、
+# 隨 Workshop 上傳。忘了產生、或產生後檔案被改，玩家端的 mesh 找不到檔或內容不對（找不到時零件整個不畫：
+# FileTask_AbstractLoadModel 回 None）——fail closed：資料表引用的每個檔都要存在且 SHA-256 與 manifest 相同，
+# 資料夾裡不得有多的檔。publish_workshop.py 發布前會跑本檔，沒先產生就不能發布。
+KI5_LABEL = "KI5 骨架裁剪 FBX 已產生且與 manifest 相符"
+_ki5_media = [m for m in MEDIA_DIRS if os.path.isfile(os.path.join(m, "lua", "client", "Patches", "MSP_KI5SkeletonTrimData.lua"))]
+if not _ki5_media:
+    skip(KI5_LABEL, "沒有 MSP_KI5SkeletonTrimData.lua")
+else:
+    import hashlib
+    _ki5_bad = []
+    with open(os.path.join(_ki5_media[0], "lua", "client", "Patches", "MSP_KI5SkeletonTrimData.lua"), encoding="utf-8") as fh:
+        _refs = sorted(set(re.findall(r'"MSP_KI5Trim/([^"|]+)\|[^"]*"', fh.read())))
+    _ki5_manifest = os.path.join(REPO, "scripts", "ki5trim", "manifest.json")
+    _sha = {}
+    if os.path.isfile(_ki5_manifest):
+        with open(_ki5_manifest, encoding="utf-8") as fh:
+            _sha = {g["file"]: g["sha256"] for g in json.load(fh)["groups"]}
+    else:
+        _ki5_bad.append("scripts/ki5trim/manifest.json 不存在")
+    _dir = os.path.join(_ki5_media[0], "models_X", "MSP_KI5Trim")
+    _have = set(os.listdir(_dir)) if os.path.isdir(_dir) else set()
+    if not _have:
+        _ki5_bad.append("42/media/models_X/MSP_KI5Trim/ 沒有檔案：先跑 python scripts/ki5trim/build.py")
+    for _name in _refs:
+        _path = os.path.join(_dir, _name + ".fbx")
+        if _name not in _sha:
+            _ki5_bad.append(f"{_name}：manifest 沒有這一組")
+        elif not os.path.isfile(_path):
+            if _have:
+                _ki5_bad.append(f"{_name}.fbx 不存在")
+        else:
+            with open(_path, "rb") as fh:
+                if hashlib.sha256(fh.read()).hexdigest() != _sha[_name]:
+                    _ki5_bad.append(f"{_name}.fbx 的 SHA-256 與 manifest 不同：重跑 python scripts/ki5trim/build.py")
+    _ki5_bad += [f"多餘的檔 {n}" for n in sorted(_have - {r + ".fbx" for r in _refs})]
+    if _sha and set(_sha) != set(_refs):
+        _ki5_bad.append(f"資料表與 manifest 的群組不一致（{len(_refs)} 對 {len(_sha)}）")
+    fail(KI5_LABEL, _ki5_bad) if _ki5_bad else ok(f"{KI5_LABEL}（{len(_refs)} 檔）")
 
 # ---- 總結 ----
 print()
