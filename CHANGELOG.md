@@ -12,6 +12,14 @@
 
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-TW/1.1.0/)，版本號遵循 `{PZ版本}-{主版本}.{次版本}.{修訂}` 格式。
 
+## [Unreleased]
+
+### 效能
+
+- **減輕 Simple Status 狀態條的畫面負擔**：Simple Status 每一幀都把每條狀態條上的刻度記號用好幾個小方塊拼出來，條目一多就成了介面裡最吃電腦的部分。現在改用較少的繪製次數畫出完全相同的刻度，狀態條的外觀、數值與設定都不變。
+
+> 技術要點：只在玩家客戶端生效；伺服器沒有啟用 Simple Status 時不做任何事。Simple Status 更新後若介面程式形狀改變，客戶端 log 會印一行 NOT installed，維持原 MOD 原樣。
+
 ## [42.21.0-0.4.4] - 2026-10-04
 
 ### 修正

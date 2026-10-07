@@ -80,6 +80,21 @@
         "mods/rSemiTruck/42.20/mod.info"
       ],
       "acked_title": "W900 Semi-Truck [B42]"
+    },
+    {
+      "wid": "2867431511",
+      "mod_id": "simpleStatus",
+      "name": "Simple Status",
+      "acked_time_updated": 1789289642,
+      "patches": [
+        "client/Patches/simpleStatus/MSP_SimpleStatusRulerBatch.lua"
+      ],
+      "recheck": "核對檔 42.20/media/lua/client/ISSSBar.lua sha256 前 12 碼 b6d0adeeea07。SSBar:drawRuler 是否仍是「8 個背景色 1 像素邊框＋1 個 alpha 1.0 白色實心矩形」、刻度寬高仍是水平 2×4／垂直 4×2、位移仍是 p*barLength／(1-p)*barLength（補丁整個換掉 drawRuler，形狀變了要跟著改）；backgroundColor 是否仍是單一純色；prerender 內是否沒有改 scroll（補丁在 prerender 開頭讀一次 scroll）；SSBar 是否仍沒有自己的 drawRectStatic、仍由 require(\"ISSSBar\") 回傳類別表；若新增高於 42.20 的版本目錄要改看那一份；作者若自己合併刻度繪製，本補丁退場",
+      "watch_files": [
+        "mods/SimpleStatus/42.20/media/lua/client/ISSSBar.lua",
+        "mods/SimpleStatus/42.20/mod.info"
+      ],
+      "acked_title": "[B41|B42] Simple Status"
     }
   ]
 }
