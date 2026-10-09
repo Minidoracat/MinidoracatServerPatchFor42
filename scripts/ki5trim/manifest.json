@@ -14346,9 +14346,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "7172c9b7f2583c22ef050788af187c8855f0d9e1944f4a5e3f0407b2580ac9f8",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "4d289a7168e122a464198caba5a32b6c184e018a41844eb64102f8b53af81b85",
    "members": [
     "Base.91range2Doorfl",
     "Base.91range2Windowfl",
@@ -14386,18 +14386,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 4
   },
   {
@@ -14406,9 +14406,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "bf2b5783c83f08ab66dd91a34e60482b587f86a4837841286d4bbeec5b5b62cc",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "a66ea6808c27a333835b3637c0aef6aab2c6c689cfd47240540b8b1f5b8d0abd",
    "members": [
     "Base.91range2Doorfr",
     "Base.91range2Windowfr",
@@ -14446,113 +14446,19 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 4
-  },
-  {
-   "file": "Vehicles_91range_Body_mk2__91range2Windowrl",
-   "mod_id": "91range",
-   "wid": "2409333430",
-   "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
-   "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "dccfc9630724f47a41646981b24e788ea649c5db3934fdddeb03911b309f9dfe",
-   "members": [
-    "Base.91range2Windowrl"
-   ],
-   "selectors": [
-    "range_2door_window_rl"
-   ],
-   "old_mesh": [
-    "vehicles/Vehicles_91range_Body_mk2|range_2door_window_rl"
-   ],
-   "named_bones": [
-    "window_rl2_bone"
-   ],
-   "clips_used": [
-    "window_rl_opening"
-   ],
-   "kept_nodes": [
-    "VehicleSkeleton",
-    "range_2door_window_rl",
-    "window_rl2_bone"
-   ],
-   "neutralized": {
-    "VehicleSkeleton": {
-     "PreRotation": [
-      -90.0,
-      0.0,
-      0.0
-     ],
-     "Lcl Translation": [
-      0.0,
-      0.665999889373779,
-      0.0
-     ]
-    }
-   },
-   "neutral_skip": null,
-   "bones_before": 20,
-   "bones_after": 2
-  },
-  {
-   "file": "Vehicles_91range_Body_mk2__91range2Windowrr",
-   "mod_id": "91range",
-   "wid": "2409333430",
-   "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
-   "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "589a19310b0e2e616b5482af5c28b3c31a50a6593a4f246ce4f368b30a6ee212",
-   "members": [
-    "Base.91range2Windowrr"
-   ],
-   "selectors": [
-    "range_2door_window_rr"
-   ],
-   "old_mesh": [
-    "vehicles/Vehicles_91range_Body_mk2|range_2door_window_rr"
-   ],
-   "named_bones": [
-    "window_rr2_bone"
-   ],
-   "clips_used": [
-    "window_rr_opening"
-   ],
-   "kept_nodes": [
-    "VehicleSkeleton",
-    "range_2door_window_rr",
-    "window_rr2_bone"
-   ],
-   "neutralized": {
-    "VehicleSkeleton": {
-     "PreRotation": [
-      -90.0,
-      0.0,
-      0.0
-     ],
-     "Lcl Translation": [
-      0.0,
-      0.665999889373779,
-      0.0
-     ]
-    }
-   },
-   "neutral_skip": null,
-   "bones_before": 20,
-   "bones_after": 2
   },
   {
    "file": "Vehicles_91range_Body_mk2__91rangeDoorfl",
@@ -14560,9 +14466,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "20c9ce4050c658a06b696f76e2b4c8cd5b822449da7be62eedd632c5a1692e5d",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "71060c2d69545d71227e3f1f4514d398f667f39dfd76e400fdd855b8dbe3ad1a",
    "members": [
     "Base.91rangeDoorfl",
     "Base.91rangeWindowfl",
@@ -14600,18 +14506,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 4
   },
   {
@@ -14620,9 +14526,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "4c6e2ce28d79b953eeaaed40660c06fab449be32edd1a9d3c69095f5c96b2ed9",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "81c2433a7faa4a44b7c769b9153b1de0be54c6b17e1f10ab2fe01591f52dd35a",
    "members": [
     "Base.91rangeDoorfr",
     "Base.91rangeWindowfr",
@@ -14660,18 +14566,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 4
   },
   {
@@ -14680,9 +14586,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "2d041f6cd1a3633039d8096e669a6567ccf11d19ad9d51e8b63fda0c1132c4e4",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "81b9dba0f6975da8f39721142ea2612ec5501eaaecfb53d479d62a89283d654e",
    "members": [
     "Base.91rangeDoorrl",
     "Base.91rangeWindowrl",
@@ -14719,18 +14625,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 3
   },
   {
@@ -14739,9 +14645,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "14a34aaaaca13079e9a6257f6c0121c5e8e2bdb7073b06bb973ae78350cc8226",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "b9efa92728dd2c4353982a6ee8b635279c622e587bc36a53cac5c47a79f78c04",
    "members": [
     "Base.91rangeDoorrr",
     "Base.91rangeWindowrr",
@@ -14778,18 +14684,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 3
   },
   {
@@ -14798,9 +14704,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "3ba03b433a6969f069dc5108042e5579b9be2ec031527a7904431c7d2c94d86d",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "34c2ba3c2bb48ebb9d79495113dcc100767a5066abbaf83dc704da0e03399fc3",
    "members": [
     "Base.91rangeHood"
    ],
@@ -14826,18 +14732,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 3
   },
   {
@@ -14846,9 +14752,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "75d38254fd3db93eabaf493b16933a54cd732f29316b7a858cbc2edf1ba4ac91",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "c52dc607bf4c4af13c3104f26a48b055faa90d10ccc02309a4c5f9966e2653a2",
    "members": [
     "Base.91rangeTrunkDoor",
     "Base.91rangeWindshieldRear",
@@ -14882,18 +14788,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 3
   },
   {
@@ -14902,9 +14808,9 @@
    "wid": "2409333430",
    "source": "media/models_x/vehicles/vehicles_91range_body_mk2.fbx",
    "source_file": "2409333430/mods/91range/common/media/models_X/vehicles/Vehicles_91range_Body_mk2.fbx",
-   "source_stamp": "28/12/2024 23:54:23.684",
-   "source_sha256": "52eecc4dc474fe1ab20126cb207bc720f435654f61acf17ba1357ee7d5e2d505",
-   "sha256": "acd2aea16682b883d222ca7f441035c111e429be1fc10bb5f43b283167248c60",
+   "source_stamp": "07/10/2026 23:02:00.833",
+   "source_sha256": "e7c1b740126c72f6089605e8bbe9d7ea521c4d7faa7368d65907fce61e64e498",
+   "sha256": "2803c7ae79145e2fa9a5f4157259e0fb57f601b7f0ee4979a5b9c40b62b70945",
    "members": [
     "Base.91rangeWindowSunRoof"
    ],
@@ -14927,18 +14833,18 @@
     "VehicleSkeleton": {
      "PreRotation": [
       -90.0,
-      0.0,
+      -0.0,
       0.0
      ],
      "Lcl Translation": [
       0.0,
-      0.665999889373779,
-      0.0
+      0.6659998893737793,
+      -0.0
      ]
     }
    },
    "neutral_skip": null,
-   "bones_before": 20,
+   "bones_before": 18,
    "bones_after": 2
   },
   {
