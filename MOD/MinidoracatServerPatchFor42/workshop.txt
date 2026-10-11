@@ -1,7 +1,7 @@
 version=1
 id=3794834559
 title=[B42] 伺服器修補 Server Patch by Minidoracat
-description=[h1]🩹 Minidoracat Server Patch for B42[/h1]
+description=[h1]🩹 Minidoracat Server Patch[/h1]
 description=[h3]By Minidoracat[/h3]
 description=
 description=[hr][/hr]

@@ -1,4 +1,4 @@
-# Minidoracat Server Patch for B42
+# Minidoracat Server Patch
 
 `[TW] PVE Minidoracat Build 42 Server #1` 專用的第三方 MOD 客製補丁層（Project Zomboid Build 42）。
 
