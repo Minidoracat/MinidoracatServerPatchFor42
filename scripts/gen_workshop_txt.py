@@ -20,7 +20,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(REPO, "STEAM_DESCRIPTION.md")   # 純中文單檔受眾
 DST = os.path.join(REPO, "MOD", "MinidoracatServerPatchFor42", "workshop.txt")
 
-TITLE = "Minidoracat Server Patch for B42"
+TITLE = "[B42] 伺服器修補 Server Patch by Minidoracat"
 TAGS = "Build 42;Multiplayer"
 VISIBILITY = "unlisted"   # 本服專用補丁，不對外推廣
 
