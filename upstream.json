@@ -7,14 +7,17 @@
       "name": "Tsar's Common Library",
       "acked_time_updated": 1788789456,
       "patches": [
-        "server/Patches/tsarslib/MSP_TuningConsumeGuard.lua"
+        "server/Patches/tsarslib/MSP_TuningConsumeGuard.lua",
+        "server/Patches/tsarslib/MSP_TsarAnimationsGuard.lua"
       ],
-      "recheck": "ATAActionsTools.lua consumeItems 的名稱正規化（__→.、find('\\.') 永遠命中）與 drainable 用量語意；ISInstallTuningVehiclePart／ISUninstallTuningVehiclePart 的 complete 是否仍是「consumeItems 後無條件 installTuning／uninstallTuning」；上游若自己補了伺服器端預檢，本補丁退場；42.21.0 目前載入 42.17/ 版本目錄，若新增更高版本目錄要改看那一份",
+      "recheck": "ATAActionsTools.lua consumeItems 的名稱正規化（__→.、find('\\.') 永遠命中）與 drainable 用量語意；ISInstallTuningVehiclePart／ISUninstallTuningVehiclePart 的 complete 是否仍是「consumeItems 後無條件 installTuning／uninstallTuning」；上游若自己補了伺服器端預檢，本補丁退場；42.21.0 目前載入 42.17/ 版本目錄，若新增更高版本目錄要改看那一份。AMC_ModData.lua 的 OnReceiveGlobalModData 是否仍以 ModData.add 整張取代 tsaranimations、鍵值語意是否仍是 onlineID＝true；上游自己檢查內容或改由伺服器維護時 MSP_TsarAnimationsGuard 退場",
       "watch_files": [
         "mods/tsarslib/common/media/lua/shared/ATAActionsTools.lua",
         "mods/tsarslib/42.17/media/lua/shared/TimedActions/ISInstallTuningVehiclePart.lua",
         "mods/tsarslib/42.17/media/lua/shared/TimedActions/ISUninstallTuningVehiclePart.lua",
         "mods/tsarslib/42.17/media/lua/client/Tuning2/ISVehicleTuning2.lua",
+        "mods/tsarslib/common/media/lua/server/Animations/AMC_ModData.lua",
+        "mods/tsarslib/common/media/lua/client/tsarlibModDataRequest.lua",
         "mods/tsarslib/common/mod.info"
       ],
       "acked_title": "Tsar's Common Library B42"
