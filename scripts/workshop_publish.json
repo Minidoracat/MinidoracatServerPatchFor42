@@ -7,7 +7,8 @@
     "preview_gif": "MOD/MinidoracatServerPatchFor42/workshop/preview.gif",
     "changelog": "STEAM_CHANGELOG.md",
     "descriptions": {
-        "english": "STEAM_DESCRIPTION.md"
+        "english": "STEAM_DESCRIPTION.md",
+        "schinese": "STEAM_DESCRIPTION_CN.md"
     },
     "titles": {
         "english": "[B42] 伺服器修補 Server Patch by Minidoracat"
