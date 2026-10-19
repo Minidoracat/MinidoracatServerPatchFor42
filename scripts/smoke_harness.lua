@@ -68,10 +68,6 @@ function require(name)
     error("require 找不到: " .. name)
 end
 
--- TODO: require 你的 MOD 模組（shared 先於 server/client）
--- require "MyMod_Core"
--- require "MyMod_Server"
-
 -- ===== 測試工具 =====
 local failures = 0
 local function check(ok, label)
@@ -86,23 +82,50 @@ local function runTicks(count)
 end
 
 -- ===== 情境 =====
--- TODO: 依 MOD 功能撰寫。範例形狀（來自 Cleaner 的實戰情境，見該 repo scripts/smoke_scanner.lua）：
---   情境一：主流程 happy path（建世界 → 觸發 → 跨 tick 推進 → 斷言結果）
---   情境二：安全邊界反面斷言（範圍外／受保護對象必須存活）
---   情境三：效能不變式（提早退出真的沒碰不該碰的東西——用計數器證明）
---
--- print("情境一：…")
--- check(condition, "描述")
--- nowMs = nowMs + 61000   -- 推進時間跨過掃描間隔／節流窗
--- runTicks(600)
+-- 拖車卸車防護（server/Patches/MSP_UnplacedVehicleGuard.lua）：包裝全域 addVehicleDebug。上游真檔差分在
+-- scripts/test_unplaced_vehicle_guard.lua；這裡用假引擎跑真補丁，守住安裝條件與回傳值。
+local GUARD = MEDIA .. "/server/Patches/MSP_UnplacedVehicleGuard.lua"
+local function engineAdd(script, dir, skin, sq)
+    return { getSqlId = function() return sq.placed and 7 or -1 end, script = script }
+end
+local function sq(placed)
+    return { placed = placed, getX = function() return 10 end, getY = function() return 20 end, getZ = function() return 0 end }
+end
+local function loadGuard(mods)
+    local set = {}
+    for _, id in ipairs(mods) do set[id] = true end
+    function getActivatedMods() return { contains = function(_, id) return set[id] == true end } end
+    addVehicleDebug, MSP_UnplacedVehicleGuard = engineAdd, nil
+    local lines, realPrint = {}, print
+    print = function(...) lines[#lines + 1] = table.concat({ ... }, " ") end
+    local ok, err = pcall(dofile, GUARD)
+    print = realPrint
+    if not ok then error(err) end
+    return lines
+end
 
-print("（骨架自檢）")
-check(type(javaList({}).size) == "function", "javaList 形狀正確")
-check(#logLines == 0 and #clientCommandHandlers >= 0, "假全域就緒")
+print("情境一：rSemiTruck 在場，引擎拒絕放置的車改回 nil")
+local lines = loadGuard({ "\\rSemiTruck", "MinidoracatServerPatchFor42" })
+check(addVehicleDebug ~= engineAdd and MSP_UnplacedVehicleGuard.original == engineAdd, "已包裝全域、原函式可取回")
+check(#lines == 1 and lines[1]:find("guard installed", 1, true) ~= nil, "安裝時印一行")
+local placed = addVehicleDebug("Base.CarNormal", "N", 0, sq(true))
+check(placed ~= nil and placed:getSqlId() == 7, "正常放置：原物件照回")
+local logged = {}
+local realPrint = print
+print = function(...) logged[#logged + 1] = table.concat({ ... }, " ") end
+local refused = addVehicleDebug("Base.CarNormal", "N", 0, sq(false))
+print = realPrint
+check(refused == nil, "引擎拒絕（sqlId -1）：回 nil")
+check(#logged == 1 and logged[1]:find("Base.CarNormal at 10,20,0", 1, true) ~= nil, "拒絕時印一行車型與座標")
+
+print("情境二：上游都缺席＝零行為")
+lines = loadGuard({ "MinidoracatServerPatchFor42", "damnlib" })
+check(addVehicleDebug == engineAdd and MSP_UnplacedVehicleGuard == nil, "不換全域、不設全域表")
+check(#lines == 0, "不印任何 log")
 
 print()
 if failures > 0 then
     print(failures .. " 項失敗")
     os.exit(1)
 end
-print("全部通過（記得補上真正的情境）")
+print("全部通過")
