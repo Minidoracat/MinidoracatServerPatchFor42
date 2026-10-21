@@ -45,7 +45,7 @@
       "wid": "3786849936",
       "mod_id": "ArcadiaRefillablePropaneTanks_B42",
       "name": "Arcadia Refillable Propane Tanks",
-      "acked_time_updated": 1790857002,
+      "acked_time_updated": 1792453574,
       "patches": [
         "server/Patches/ArcadiaRefillablePropaneTanks_B42/MSP_ArcadiaDepotSpriteLoad.lua"
       ],
@@ -61,7 +61,7 @@
       "wid": "3171167894",
       "mod_id": "damnlib",
       "name": "that DAMN Library",
-      "acked_time_updated": 1791917231,
+      "acked_time_updated": 1792520028,
       "patches": [
         "server/Patches/damnlib/MSP_DamnSpawnIndex.lua",
         "server/Patches/MSP_ChunkSquareDispatch.lua"

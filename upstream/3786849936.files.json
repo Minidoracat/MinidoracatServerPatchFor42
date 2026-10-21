@@ -1,9 +1,10 @@
 {
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/actiongroups/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/AnimSets/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
- "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/client/ArcadiaRefillablePropane_Client.lua": "9d23d81c91914df8f38d23c7c66f421e921b1ca2c046a3ff8f7f474d45cc6300",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/client/ArcadiaRefillablePropane_Client.lua": "58236b2a3e7c4d305d1fa9bec2b74787dbf0e49e6cfe18cec43af302fd33f360",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/server/ArcadiaRefillablePropane_Server.lua": "88e11a53a7affbee5c61880eb07ed1d63c175cab50032d1f55717da5d8d77435",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_Shared.lua": "3df90e57bb7b785c052e965294c157f96a7c632719938aecc06c3b2b6419f5b2",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_TorchRecipeGuard.lua": "4bbdfab738d1054f40beb7e020aed7e85e7a76191c86108a89639bf57a1bf62a",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/TimedActions/ISArcadiaRefillPropaneAction.lua": "ccffd70f2eba3cfdaf5627fcf63e80f1f60740f2cad2ffc6a4eaab175a4fcb9e",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/TimedActions/ISArcadiaVehiclePropaneAction.lua": "9adbdf257464c9c3717595a861cd0e0cc8588af10150e14e2c690f916b806d6f",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/Translate/EN/Sandbox.json": "aa08ec033af665d4147cfa02fcf0fe07f16811bff7706508ecc3d21fb960e180",
@@ -13,8 +14,8 @@
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/Translate/PTBR/Sandbox_PTBR.txt": "b8fde1a31aad0549ca2d7e7e8f3cd29655ab6fc33b0e8a2af6ab00011672d987",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/Translate/PTBR/UI_PTBR.txt": "e4f4764a61e728d932a9f593370cf75a9486c61e29f58414f868ba78952c09ee",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/sandbox-options.txt": "23cc4dfc67f619eddac060303ed023d89c0763f96913ccd4ed4b14038e38cd7a",
- "mods/ArcadiaRefillablePropaneTanks_B42/42/mod.info": "f9dccdd79e4a8ae92b08f4c30294af883f402437a27bfb39622c79bb6addd6f5",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/mod.info": "5b0f34908104f23e648139828e196b7c94727890e973a45d68257d9cff5e52c1",
  "mods/ArcadiaRefillablePropaneTanks_B42/common/media/actiongroups/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
  "mods/ArcadiaRefillablePropaneTanks_B42/common/media/AnimSets/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
- "mods/ArcadiaRefillablePropaneTanks_B42/mod.info": "f9dccdd79e4a8ae92b08f4c30294af883f402437a27bfb39622c79bb6addd6f5"
+ "mods/ArcadiaRefillablePropaneTanks_B42/mod.info": "5b0f34908104f23e648139828e196b7c94727890e973a45d68257d9cff5e52c1"
 }

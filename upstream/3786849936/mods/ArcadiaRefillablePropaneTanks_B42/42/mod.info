@@ -1,6 +1,6 @@
-name=Refillable Propane Tanks [B42.20+] - 1.9.2
+name=Refillable Propane Tanks [B42.20+] - 1.9.4
 id=ArcadiaRefillablePropaneTanks_B42
-modversion=1.9.2
+modversion=1.9.4
 versionMin=42.20
-description=Two-way persistent map propane depots, broad Workshop item support, and direct F700 truck integration. Blowtorches are refill targets only.
+description=Two-way persistent map propane depots, Workshop item and F700 support, plus a conflict-aware empty welding-torch refill guard. One Mod ID with no required dependencies.
 category=items,multiplayer
