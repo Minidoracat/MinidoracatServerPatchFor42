@@ -426,31 +426,31 @@ groups = {
       vehicles = { "Base.69charger440", "Base.69chargerRT" }, models = {
         { "Base.69chargertrunkDoorRT", "vehicles/Vehicles_69charger_Body|charger_trunkLid", "MSP_KI5Trim/Vehicles_69charger_Body__69chargertrunkDoorRT|charger_trunkLid", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69mini", "Base.69miniIJ", "Base.69miniMrB", "Base.69miniPS", "Base.69miniUnionJack" }, models = {
         { "Base.69miniDoorfl", "vehicles/Vehicles_69mini_Body|mini_door_fl", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfl|mini_door_fl", false },
         { "Base.69miniDoorfla", "vehicles/Vehicles_69mini_Body|mini_window_fl_a", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfl|mini_window_fl_a", false },
         { "Base.69miniWindowfl", "vehicles/Vehicles_69mini_Body|mini_window_fl", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfl|mini_window_fl", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69mini", "Base.69miniIJ", "Base.69miniMrB", "Base.69miniPS", "Base.69miniUnionJack" }, models = {
         { "Base.69miniDoorfr", "vehicles/Vehicles_69mini_Body|mini_door_fr", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfr|mini_door_fr", false },
         { "Base.69miniDoorfra", "vehicles/Vehicles_69mini_Body|mini_window_fr_a", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfr|mini_window_fr_a", false },
         { "Base.69miniWindowfr", "vehicles/Vehicles_69mini_Body|mini_window_fr", "MSP_KI5Trim/Vehicles_69mini_Body__69miniDoorfr|mini_window_fr", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69mini", "Base.69miniMrB", "Base.69miniUnionJack" }, models = {
         { "Base.69miniHood", "vehicles/Vehicles_69mini_Body|mini_hood0", "MSP_KI5Trim/Vehicles_69mini_Body__69miniHood|mini_hood0", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69miniIJ" }, models = {
         { "Base.69miniHood1", "vehicles/Vehicles_69mini_Body|mini_hood1", "MSP_KI5Trim/Vehicles_69mini_Body__69miniHood1|mini_hood1", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69miniPS" }, models = {
         { "Base.69miniHood2", "vehicles/Vehicles_69mini_Body|mini_hood2", "MSP_KI5Trim/Vehicles_69mini_Body__69miniHood2|mini_hood2", false },
     } },
-    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "25/03/2025 16:35:15.528",
+    { mod = "69mini", wid = "2937786633", src = "media/models_X/vehicles/Vehicles_69mini_Body.fbx", stamp = "21/10/2026 18:34:21.001",
       vehicles = { "Base.69mini", "Base.69miniIJ", "Base.69miniMrB", "Base.69miniPS", "Base.69miniUnionJack" }, models = {
         { "Base.69miniTrunkDoor", "vehicles/Vehicles_69mini_Body|mini_trunkDoor", "MSP_KI5Trim/Vehicles_69mini_Body__69miniTrunkDoor|mini_trunkDoor", false },
     } },

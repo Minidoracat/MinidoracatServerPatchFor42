@@ -2097,9 +2097,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "9d6cd6bd439a1965751bd153b164f76c0b177194a4971763843ee43077b7c9b5",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "c9191e93453594dde3dad672cd8686a7bea8fe3e16a48921b613ae0cc387195a",
    "members": [
     "Base.69miniDoorfl",
     "Base.69miniDoorfla",
@@ -2116,7 +2116,8 @@
     "vehicles/Vehicles_69mini_Body|mini_window_fl"
    ],
    "named_bones": [
-    "door_fl_bone"
+    "door_fl_bone",
+    "window_fl_bone"
    ],
    "clips_used": [
     "Attack_Shove",
@@ -2156,9 +2157,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "8b5732dc6da94dc9d81bc6f291ba89c11cc4fbb994706ae384b6846080a58fc3",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "42d63f671f64d0fbfeba64f94d25295bebf2447d5271724e657e62663238a17d",
    "members": [
     "Base.69miniDoorfr",
     "Base.69miniDoorfra",
@@ -2175,7 +2176,8 @@
     "vehicles/Vehicles_69mini_Body|mini_window_fr"
    ],
    "named_bones": [
-    "door_fr_bone"
+    "door_fr_bone",
+    "window_fr_bone"
    ],
    "clips_used": [
     "Attack_Shove",
@@ -2215,9 +2217,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "709d112c21b25284dcdc70b95e88b1f3ba86923a25bc4905c538716d7959345e",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "c7dda31c5d92afc6877f7d2bf8e7faae70472ffc4eb94ca02d58aec5631390fd",
    "members": [
     "Base.69miniHood"
    ],
@@ -2263,9 +2265,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "c51b92021822eb0ed932790e50f448f529744eaf3b3c69de1d8acfb0538ac334",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "f3ac93bc8dce579668b739966045942c3d3b5fc43445b0732e630f3711006c8d",
    "members": [
     "Base.69miniHood1"
    ],
@@ -2311,9 +2313,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "5e99d48a89a8e930100591bb7b702ab37acd6aa8bd14c6c81a88787c22d2e4fc",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "9643a31bae498cae900c27b3b6b542252353d72742ad1607dfcbdfdd1dc95930",
    "members": [
     "Base.69miniHood2"
    ],
@@ -2359,9 +2361,9 @@
    "wid": "2937786633",
    "source": "media/models_x/vehicles/vehicles_69mini_body.fbx",
    "source_file": "2937786633/mods/69mini/common/media/models_X/vehicles/Vehicles_69mini_Body.fbx",
-   "source_stamp": "25/03/2025 16:35:15.528",
-   "source_sha256": "b6d49bc1c591d0bb3e380aafb675ede6fff43d8b9c044230dc89f5051f917960",
-   "sha256": "4fac6fb28a4bb1c7c553b2c911911567e3372caf77236c26bd02583b6d0501fd",
+   "source_stamp": "21/10/2026 18:34:21.001",
+   "source_sha256": "09cd4d5be64ba2aa99060dc09c2234f6ea178ee58e14842b2dfca5de8a686b34",
+   "sha256": "bcb802b3816d475d93c5130e38c9e1d08da1e6f3b7374ea689a883809a1af5b9",
    "members": [
     "Base.69miniTrunkDoor"
    ],
