@@ -32,6 +32,14 @@ option MinidoracatServerPatchFor42.SlimSemiTruckRestore
     translation = MinidoracatServerPatchFor42_SlimSemiTruckRestore,
 }
 
+option MinidoracatServerPatchFor42.SlimVfeLoad
+{
+    type = boolean,
+    default = true,
+    page = MinidoracatServerPatchFor42,
+    translation = MinidoracatServerPatchFor42_SlimVfeLoad,
+}
+
 option BagUpgradePlus.UpgradedBagSpawnChance
 {
     type = integer,

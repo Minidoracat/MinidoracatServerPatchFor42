@@ -8,6 +8,8 @@
   "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckLoad_tooltip": "Only checks the guaranteed semi truck and trailer spawn spots at those spots, instead of on every tile of every loaded area. Same vehicles, same places. Takes effect after a server restart. Does nothing if the semi truck mod is not installed.",
   "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore": "Lighter periodic scan: semi truck car trailer check",
   "Sandbox_MinidoracatServerPatchFor42_SlimSemiTruckRestore_tooltip": "After a restart the semi truck mod re-checks every loaded vehicle each in-game minute until it finds a car trailer. This makes it check every 30 in-game minutes instead. Car trailers loaded later get their covers restored at the next check. Takes effect after a server restart. Does nothing if the semi truck mod is not installed.",
+  "Sandbox_MinidoracatServerPatchFor42_SlimVfeLoad": "Lighter chunk loading: Vanilla Foods Expanded",
+  "Sandbox_MinidoracatServerPatchFor42_SlimVfeLoad_tooltip": "Vanilla Foods Expanded's server checks for food aging and safehouse loot only run on tiles that have containers or items on the ground, and its safehouse check no longer rescans every waiting building for each of the 64 chunks of an area that loads at once. Same items, same aging, same loot. Takes effect after a server restart. Does nothing if that mod is not installed.",
   "Sandbox_BagUpgradePlus": "Bag Upgrade Plus",
   "Sandbox_BagUpgradePlus_UpgradedBagSpawnChance": "Upgraded Bag Spawn Chance",
   "Sandbox_BagUpgradePlus_UpgradedBagSpawnChance_tooltip": "Controls how often zombies carry upgraded bags. 0 = Never, 100 = Always. Default: 10 (Rare)"

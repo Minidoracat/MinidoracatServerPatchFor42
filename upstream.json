@@ -64,7 +64,7 @@
       "acked_time_updated": 1792520028,
       "patches": [
         "server/Patches/damnlib/MSP_DamnSpawnIndex.lua",
-        "server/Patches/MSP_ChunkSquareDispatch.lua"
+        "shared/Patches/MSP_ChunkSquareDispatch.lua"
       ],
       "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare、仍是 DAMN_Spawns.lua 唯一的 LoadGridsquare 註冊且仍在 OnInitGlobalModData 內（補丁以檔名攔下它、改由 LoadChunk 只對索引命中格子呼叫；檔名或路徑改了要改 UPSTREAM_FILE）；checkSquare 是否仍在 spawnerDebug 關閉時把「被阻擋」也 remember（:165-184，LoadChunk 時點差異的後果取決於此）；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場",
       "watch_files": [],
@@ -77,7 +77,7 @@
       "acked_time_updated": 1790971578,
       "patches": [
         "server/Patches/rSemiTruck/MSP_SemiTruckSpawnIndex.lua",
-        "server/Patches/MSP_ChunkSquareDispatch.lua",
+        "shared/Patches/MSP_ChunkSquareDispatch.lua",
         "shared/Patches/rSemiTruck/MSP_SemiTruckRestoreThrottle.lua",
         "client/Patches/rSemiTruck/MSP_VehicleOptimizeGraph.lua",
         "server/Patches/MSP_UnplacedVehicleGuard.lua"
@@ -704,6 +704,19 @@
       "watch_files": [],
       "acked_title": "[B42.20] Bag Upgrade Plus",
       "delisted": true
+    },
+    {
+      "wid": "3577903007",
+      "mod_id": "VanillaFoodsExpanded",
+      "name": "Vanilla Foods Expanded",
+      "acked_time_updated": 1792125922,
+      "patches": [
+        "shared/Patches/VanillaFoodsExpanded/MSP_VfeLoadSlim.lua",
+        "shared/Patches/MSP_ChunkSquareDispatch.lua"
+      ],
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔（42.18/media/lua/）sha256 前 12 碼：server/vfx_agingmanager.lua 37ca2655bf30、server/vfx_storydistribution.lua cef340bc4fe9（補丁不碰的 shared/vfx_birthday.lua d7893647a68d）。補丁在 shared 載入時以 getModFileReader 重算兩檔的行數與雜湊（MSP_VfeLoadSlim.lua 的 AGING／STORY 常數），不符就 NOT installed、上游原樣；所以上游一更新補丁就自動退回原樣，重核通過後要更新那兩組常數（scripts/test_vfe_load_slim.lua 會印出新值）。要核對的前提：(1) aging loadGridSquare 是否仍只在「沒有地上物品也沒有容器」時什麼都不做就 return（容器判斷仍是逐物件 getContainerCount > 0），殘留佇列項目的清理仍以 scan.pending[square] 判斷；max_queued_squares 是否仍是 512、processSquareScanQueue 是否仍每次至少取出一項、佇列清空時是否仍自己 Events.OnTick.Remove；processSquareScanQueue 是否仍是該檔唯一的 OnTick.Add，且只在 loadGridSquare 開新一輪掃描時掛上；debug 旗標仍是 VFX.AgingSkipDebug／AgingQueueDebug。(2) story onLoadGridsquare 是否仍只對格子上的容器登記（沒有容器就不做事）、全域 isServer 是否仍只在新建待處理建築的 indexBuilding 呼叫、Events.LoadChunk.Add 是否仍只掛 onLoadChunk。(3) onLoadChunk 是否仍只在完成或清掉建築時有副作用：pruneBuilding 只依 chunk 是否還在／loadID／格子是否還在、完成條件仍是 (firstCheck 或不過濾或 bucket 含該建築) 且 isFullyStreamedIn、cellKey 仍是 64 格、Events.LoadChunk.Remove 仍只在 onLoadChunk 裡呼叫。(4) 兩檔仍是 VFE server/ 下僅有的 LoadGridsquare 註冊、中間沒有別的；shared/vfx_birthday.lua 的匿名 LoadGridsquare 仍在 shared 載入時註冊（補丁攔不到，未涵蓋）。上游若自己做了同樣的過濾，本補丁退場。",
+      "watch_files": [],
+      "acked_title": "Vanilla Foods Expanded"
     }
   ]
 }

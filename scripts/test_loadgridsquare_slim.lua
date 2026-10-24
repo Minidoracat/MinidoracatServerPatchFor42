@@ -19,7 +19,7 @@ local PATCH = {
     arcadia = PATCHES .. "ArcadiaRefillablePropaneTanks_B42/MSP_ArcadiaDepotSpriteLoad.lua",
     damn = PATCHES .. "damnlib/MSP_DamnSpawnIndex.lua",
     semi = PATCHES .. "rSemiTruck/MSP_SemiTruckSpawnIndex.lua",
-    dispatch = PATCHES .. "MSP_ChunkSquareDispatch.lua",
+    dispatch = "MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/lua/shared/Patches/MSP_ChunkSquareDispatch.lua",
 }
 local function readFile(path)
     local fh = io.open(path, "r")

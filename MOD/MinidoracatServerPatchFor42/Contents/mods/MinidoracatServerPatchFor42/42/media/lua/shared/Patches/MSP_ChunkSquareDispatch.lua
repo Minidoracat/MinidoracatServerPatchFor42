@@ -1,15 +1,20 @@
 --[[
 MSP_ChunkSquareDispatch — 以「每個 chunk 一次」的 LoadChunk 取代「每格一次」的 LoadGridsquare，只把索引命中的格子交給上游
 
-不是補丁本身，是 damnlib／rSemiTruck 兩個補丁共用的攔截器與分派器（`require "Patches/MSP_ChunkSquareDispatch"`，回傳表；
-狀態放在全域 `MSP_ChunkSquareDispatch`，require 沒有命中快取而重跑本檔時，攔截器仍只有一個）。
+不是補丁本身，是 damnlib／rSemiTruck／VanillaFoodsExpanded 補丁共用的攔截器與分派器（`require "Patches/MSP_ChunkSquareDispatch"`，
+回傳表；狀態放在全域 `MSP_ChunkSquareDispatch`，require 沒有命中快取而重跑本檔時，攔截器仍只有一個）。放 shared/：VFE 補丁要在
+shared 載入時就 claim（早於上游 server/ 檔，GameServer.java:1469-1471），而 server/ 的 require 路徑要等 LoadDirBase("server")
+才登記（LuaManager.java:1136-1139、:5674-5690）。客戶端也會載入本檔，但只建表、不碰任何事件。
 
 【攔截註冊】`claim(檔名尾段, onMatch, onDone)`：第一次呼叫時暫換 `Events.LoadGridsquare.Add`（全伺服器只換一次），
 以 `getFilenameOfClosure`（LuaManager.java:7341-7347）認出各上游檔傳進來的函式交給對應的 onMatch；onMatch 回 true＝已接手、
-不交給引擎，回 false＝原樣註冊。其他函式原樣轉交。同時追加一個 OnInitGlobalModData 回呼：把 `Add` 換回引擎原本的函式，
-再對每個 claim 呼叫一次 onDone(命中次數)。各補丁若各自暫換、各自還原會串成鏈：後裝的記下的「原本的 Add」其實是先裝的
-包裝，還原後 `Add` 永遠停在別人的包裝上，所以集中在這裡。時序：OnInitGlobalModData 在 OnGameBoot 之後觸發
-（GameServer.java:773,787,1496、IsoWorld.java:2009、GlobalModData.java:54），OnGameBoot 內追加的回呼排在上游之後。
+不交給引擎，回 false＝原樣註冊。其他函式原樣轉交。還原：把 `Add` 換回引擎原本的函式，再對每個 claim 呼叫一次 onDone(命中次數)，
+在 OnInitGlobalModData 做（damnlib／rSemiTruck 在那裡面才註冊）。各補丁若各自暫換、各自還原會串成鏈：後裝的記下的「原本的 Add」
+其實是先裝的包裝，還原後 `Add` 永遠停在別人的包裝上，所以集中在這裡。
+時序：claim 要在 OnGameBoot 結束前呼叫（shared 載入時或 OnGameBoot 內都行）。還原回呼一律在 OnGameBoot 裡才追加到
+OnInitGlobalModData，才會排在所有「檔案載入時註冊」的 OnInitGlobalModData 回呼之後（OnInitGlobalModData 在 OnGameBoot 之後觸發，
+GameServer.java:773,787,1496、IsoWorld.java:2009、GlobalModData.java:54）；claim 在 OnGameBoot 內才第一次呼叫時，追加的
+OnGameBoot 回呼在同一輪觸發中照樣會跑（Event.java:52-64 每圈重讀 callbacks.size()）。
 
 【分派】`dispatch(getIndex, upstream, prefix)` 回傳 LoadChunk 回呼；getIndex() 回傳 x → { [y] = true }（世界座標）或 nil
 （nil＝本次不處理）。引擎依據 `IsoChunk.doLoadGridsquare`（IsoChunk.java:3695-3970）：
@@ -26,10 +31,11 @@ local M = MSP_ChunkSquareDispatch or {}
 MSP_ChunkSquareDispatch = M
 M.claims = M.claims or {}
 
-local function fromFile(fn, suffix)
+function M.fromFile(fn, suffix)
     local ok, file = pcall(getFilenameOfClosure, fn)
     return ok and type(file) == "string" and string.find(string.lower(file), suffix, 1, true) ~= nil
 end
+local fromFile = M.fromFile
 
 -- LoadGridsquare／LoadChunk 兩個事件表都在（`Events.X` 是一般 Lua 表，Event.java:78-83）才可用
 function M.available()
@@ -63,9 +69,11 @@ function M.claim(suffix, onMatch, onDone)
     M.restore = function()
         if event.Add == add then event.Add = engineAdd end
     end
-    Events.OnInitGlobalModData.Add(function()
-        M.restore()
-        for i = 1, #claims do claims[i].onDone(claims[i].matched) end
+    Events.OnGameBoot.Add(function()
+        Events.OnInitGlobalModData.Add(function()
+            M.restore()
+            for i = 1, #claims do claims[i].onDone(claims[i].matched) end
+        end)
     end)
 end
 
