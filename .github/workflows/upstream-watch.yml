@@ -24,7 +24,7 @@ jobs:
           import json
           r = json.load(open("report.json"))
           print("count=" + str(len(r)))
-          print("wids=" + " ".join(c["wid"] for c in r if c["status"] == "updated"))
+          print("wids=" + " ".join(c["wid"] for c in r if c["status"] in ("updated", "relisted")))
           PY
 
       # 第 2、3 層：只有時間戳有變才裝 steamcmd 抓內容比對。
@@ -84,8 +84,11 @@ jobs:
                 parts = [url, '', '伺服器將抓不到此 MOD，請確認 ini 的 `Mods=`／`WorkshopItems=` 是否要移除。', '',
                          '受影響 patch：', ...c.patches.map(p => `- \`${p}\``)];
               } else {
-                title = `${key} ${c.name} 更新於 ${fmt(c.steam_time_updated)}`;
+                title = c.status === 'relisted'
+                  ? `${key} ${c.name} 重新上架（Steam 更新於 ${fmt(c.steam_time_updated)}）`
+                  : `${key} ${c.name} 更新於 ${fmt(c.steam_time_updated)}`;
                 parts = [url, '',
+                  ...(c.status === 'relisted' ? ['上游曾下架、內容目前由本 MOD 收錄；下面的檔案差異是和收錄時的版本比。處理方式見 upstream.json 這筆的 `recheck`。', ''] : []),
                   '## 1. 時間戳',
                   `- 核對過的版本：${fmt(c.acked_time_updated)}`,
                   `- Steam 現在：${fmt(c.steam_time_updated)}`, '',

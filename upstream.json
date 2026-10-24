@@ -688,6 +688,22 @@
       "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
       "watch_files": [],
       "acked_title": "Campers!"
+    },
+    {
+      "wid": "3668094025",
+      "mod_id": "BagUpgradePlusUpdated",
+      "name": "Bag Upgrade Plus [B42.20]",
+      "acked_time_updated": 1788177974,
+      "patches": [
+        "client/BagUpgradePlus_RarityOverrides.lua",
+        "server/BUP_ZombieOutfits.lua",
+        "shared/HiddenCarryEquip.lua",
+        "../registries.lua"
+      ],
+      "recheck": "上游 2026-10 下架，內容由本 MOD 原樣收錄以保住存檔裡的 Plus 背包：42/media 的 scripts、clothing、fileGuidTable、lua/{client,server,shared} 三個 Lua 檔（路徑與上游相同，同時載入時互相覆蓋、只跑一份）、registries.lua（先查再註冊）、sandbox-options.txt 的 BagUpgradePlus.UpgradedBagSpawnChance、Translate 的 EN/CH/CN（CH/CN 取自 ModLang 的譯文）。delisted=true 時下架是預期狀態，Steam 又查得到才開 issue。重新上架後：比對檔案差異，決定改回上游（正式服 Mods=／WorkshopItems= 加回、本 MOD 刪掉收錄的檔案與這筆的 delisted，再 --ack）或繼續收錄；上游必須排在本 MOD 前面，否則它的 registries.lua 會因重複註冊丟例外。",
+      "watch_files": [],
+      "acked_title": "[B42.20] Bag Upgrade Plus",
+      "delisted": true
     }
   ]
 }

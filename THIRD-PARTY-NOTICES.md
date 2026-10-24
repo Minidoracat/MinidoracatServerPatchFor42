@@ -6,7 +6,7 @@
 `STEAM_DESCRIPTION.md`、`STEAM_CHANGELOG.md`、`upstream.json`。
 封面與視覺素材同受 MIT，詳見最後一節。
 
-**不在** MIT 授權範圍、沿用原始權利人權利的只有下一節的 `upstream/`；其餘各節是說明為何本專案自有內容仍完整受 MIT 涵蓋。
+**不在** MIT 授權範圍、沿用原始權利人權利的只有下兩節：`upstream/`，以及收錄的 Bag Upgrade Plus 內容；其餘各節是說明為何本專案自有內容仍完整受 MIT 涵蓋。
 
 ## `upstream/` — 上游 Workshop MOD 快照
 
@@ -29,6 +29,12 @@
 that DAMN Library（Workshop [3171167894](https://steamcommunity.com/sharedfiles/filedetails/?id=3171167894)，mod id `damnlib`）
 檔頭宣告 On Lockdown（不得重新散布、重新打包或修改其檔案），因此只有 `upstream/3171167894.files.json`，
 repo 不存放它的任何檔案內容。
+
+## 收錄的 Bag Upgrade Plus 內容（**不在** MIT 範圍）
+
+[B42.20] Bag Upgrade Plus（Workshop 3668094025，mod id `BagUpgradePlusUpdated`，modversion 1.7.1；`mod.info` 署名「ProduktFrosch (original), Alaet」）在 2026-10 從 Workshop 下架。伺服器存檔裡有它的背包物品，拿掉就會在載入時消失，所以本 MOD 原樣收錄它 `42/media` 的內容，讓這些物品照舊載入。著作權屬原作者，不適用本專案的 MIT，本專案不對其另行授權。原作者 ProduktFrosch 的作品頁（[B42.13] Bag Upgrade Plus，Workshop [3640342538](https://steamcommunity.com/sharedfiles/filedetails/?id=3640342538)）載明他已授權任何人更新他的 MOD；Alaet 版是依此授權更新的版本，Alaet 自己另加的部分沒有找到另外的條款。
+
+收錄的路徑（相對於 `MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/`）：`scripts/clothing/BUP_*.txt`、`scripts/items/BUP_*.txt`、`scripts/recipes/BUP_Recipes.txt`、`clothing/clothingItems/Bag_*Plus.xml`、`fileGuidTable.xml`、`lua/client/BagUpgradePlus_RarityOverrides.lua`、`lua/server/BUP_ZombieOutfits.lua`、`lua/shared/HiddenCarryEquip.lua`、`lua/shared/Translate/EN/{ItemName,Recipes}.json`，以及 `sandbox-options.txt` 的 `BagUpgradePlus.UpgradedBagSpawnChance` 與 `Translate/EN/Sandbox.json` 的 `Sandbox_BagUpgradePlus*` 鍵。改動只有換行改成 LF、刪掉其他語言的翻譯；CH/CN 的物品、配方與沙盒譯文改用 [B42]繁體簡體模組翻譯（本服自有）的譯文。`registries.lua` 是本專案自有實作（受 MIT），只是用相同 ID 註冊上游的兩個登錄項。
 
 ## 與上游互通所需的相容性實作（**在** MIT 範圍內）
 

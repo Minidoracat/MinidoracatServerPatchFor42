@@ -12,6 +12,7 @@
   2. 全 MOD 檔案清單差異（與 upstream/<wid>.files.json 的 hash 清單比）——有來源目錄才有
   3. watch_files 的 unified diff（與 upstream/<wid>/<relpath> 的快照比）——有來源目錄才有
 比對只是附加資訊；抓不到來源也照樣回報「有更新」。
+upstream.json 某筆標 "delisted": true（上游已下架、內容由本 MOD 收錄）時反過來：抓不到不回報，Steam 又查得到就回報 relisted。
 """
 import argparse
 import difflib
@@ -159,7 +160,14 @@ def main():
     changed = []
     for u in ups:
         d = details.get(str(u["wid"]))
-        if not d or d.get("result") != 1:
+        available = bool(d) and d.get("result") == 1
+        if u.get("delisted"):
+            if available:
+                changed.append({**u, "status": "relisted", "steam_time_updated": int(d["time_updated"]),
+                                "steam_title": d.get("title"),
+                                "compare": compare(u, src_dir) if src_dir else {"status": "no_source"}})
+            continue
+        if not available:
             changed.append({**u, "status": "unavailable", "steam_result": d.get("result") if d else None})
             continue
         now = int(d["time_updated"])
@@ -177,7 +185,8 @@ def main():
         if c["status"] == "unavailable":
             print(f"!! {c['name']} ({c['wid']}) Steam 回 result={c['steam_result']}，可能已下架")
             continue
-        print(f"!! {c['name']} ({c['wid']}) 上游更新 {fmt(c['steam_time_updated'])}（核對過的是 {fmt(c.get('acked_time_updated'))}）")
+        verb = "重新上架" if c["status"] == "relisted" else "上游更新"
+        print(f"!! {c['name']} ({c['wid']}) {verb} {fmt(c['steam_time_updated'])}（核對過的是 {fmt(c.get('acked_time_updated'))}）")
         print("   受影響 patch：" + ", ".join(c["patches"]))
         cmp_ = c["compare"]
         if cmp_["status"] != "ok":
