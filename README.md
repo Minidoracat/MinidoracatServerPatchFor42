@@ -2,7 +2,7 @@
 
 `[TW] PVE Minidoracat Build 42 Server #1` 專用的第三方 MOD 客製補丁層（Project Zomboid Build 42）。
 
-針對本服 MOD 組合的調整都放在這裡：補丁不改寫上游 MOD 的檔案，Workshop 發布包不夾帶上游原始檔（例外有二：下方「KI5 骨架裁剪」的本服專用模型檔，只在本機產生、不進本 repo；以及已下架的 Bag Upgrade Plus，見下方「收錄的下架 MOD」）；每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。本 repo 另在 `upstream/` 保留第三方對照快照與追蹤紀錄，其內容不適用本專案 MIT，詳見下方授權說明。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
+針對本服 MOD 組合的調整都放在這裡：補丁不改寫上游 MOD 的檔案，Workshop 發布包不夾帶上游原始檔（唯一例外是下方「KI5 骨架裁剪」的本服專用模型檔，只在本機產生、不進本 repo）；每個 patch 執行時偵測對應的上游 MOD，沒裝就零行為。本 repo 另在 `upstream/` 保留第三方對照快照與追蹤紀錄，其內容不適用本專案 MIT，詳見下方授權說明。不承諾通用、不承諾退場。純 vanilla 壞掉、官方修好就該退場的修復走 [`MinidoracatFixesFor42`](https://github.com/Minidoracat/MinidoracatFixesFor42)。
 
 各 patch 改了什麼看各檔檔頭與 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -12,14 +12,6 @@
 - `upstream/`：`--ack` 時寫下的全 MOD 檔案 hash 與 `watch_files` 快照。
 - `scripts/check_upstream.py`：① Steam 更新時間 ② 檔案清單差異 ③ `watch_files` diff。②③ 需上游副本（本機預設 Steam 訂閱目錄，`PZ_WORKSHOP_DIR` 或 `--source` 可改）。
 - `.github/workflows/upstream-watch.yml`：每天跑；時間戳有變才 steamcmd 下載比對並開 issue，下載失敗仍開。`upstream.json` 標 `"delisted": true` 的上游反過來：查不到是預期狀態，Steam 又查得到時開「重新上架」issue。
-
-## 收錄的下架 MOD
-
-[B42.20] Bag Upgrade Plus（Workshop 3668094025，mod id `BagUpgradePlusUpdated`）2026-10 從 Workshop 下架。伺服器存檔裡有它的背包，拿掉就會在載入時連同內容物消失，所以本 MOD 原樣收錄它的 `42/media` 內容（物品、衣物、配方、Lua、EN 翻譯；CH/CN 譯文取自本服的模組翻譯包），ID 全部沿用，伺服器拿掉原 MOD、只留本 MOD 即可。收錄的路徑與授權見 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
-
-- `registries.lua` 先查再註冊：原 MOD 同時啟用時（要排在本 MOD 前面）它已註冊過，重複註冊會讓開服丟例外。
-- 三個 Lua 檔與原 MOD 同路徑，同時啟用時後載入的蓋掉前面的，只跑一份。
-- 原 MOD 重新上架時 `upstream-watch` 會開 issue，處理方式寫在 `upstream.json` 該筆的 `recheck`。
 
 ## KI5 骨架裁剪（本服專用模型檔）
 
@@ -68,7 +60,7 @@ uv run --no-project python -B scripts/publish_workshop.py --mode all --dry-run  
 
 本專案自有的程式與文件採 [MIT](LICENSE)（Copyright (c) 2026 Minidoracat）。
 
-例外：`upstream/` 下的上游 Workshop MOD 快照，以及收錄的 Bag Upgrade Plus 內容，為第三方著作，
+例外：`upstream/` 下的上游 Workshop MOD 快照，以及 Git 歷史中收錄過的 Bag Upgrade Plus 內容（現由 Minidoracat Bags 接手舊背包），為第三方著作，
 不在 MIT 範圍內。封面素材為本專案自有產出，與程式同受 MIT。
 完整清單見 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 

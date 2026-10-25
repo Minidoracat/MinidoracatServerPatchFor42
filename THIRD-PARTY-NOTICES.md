@@ -6,7 +6,7 @@
 `STEAM_DESCRIPTION.md`、`STEAM_CHANGELOG.md`、`upstream.json`。
 封面與視覺素材同受 MIT，詳見最後一節。
 
-**不在** MIT 授權範圍、沿用原始權利人權利的只有下兩節：`upstream/`，以及收錄的 Bag Upgrade Plus 內容；其餘各節是說明為何本專案自有內容仍完整受 MIT 涵蓋。
+**不在** MIT 授權範圍、沿用原始權利人權利的只有下兩節：`upstream/`，以及 Git 歷史中收錄過的 Bag Upgrade Plus 內容；其餘各節是說明為何本專案自有內容仍完整受 MIT 涵蓋。
 
 ## `upstream/` — 上游 Workshop MOD 快照
 
@@ -30,7 +30,9 @@ that DAMN Library（Workshop [3171167894](https://steamcommunity.com/sharedfiles
 檔頭宣告 On Lockdown（不得重新散布、重新打包或修改其檔案），因此只有 `upstream/3171167894.files.json`，
 repo 不存放它的任何檔案內容。
 
-## 收錄的 Bag Upgrade Plus 內容（**不在** MIT 範圍）
+## Git 歷史中收錄過的 Bag Upgrade Plus 內容（**不在** MIT 範圍）
+
+本 MOD 換裝版起不再收錄這些內容：存檔裡的舊背包改由 Minidoracat Bags（`MinidoracatBagsFor42`，本專案另一個 MOD，用自己寫的定義接手同樣的物品 ID）載入。下面兩段描述的檔案只存在於 Git 歷史（commit `d72c2e7` 到換裝前一版），授權狀態不變。
 
 [B42.20] Bag Upgrade Plus（Workshop 3668094025，mod id `BagUpgradePlusUpdated`，modversion 1.7.1；`mod.info` 署名「ProduktFrosch (original), Alaet」）在 2026-10 從 Workshop 下架。伺服器存檔裡有它的背包物品，拿掉就會在載入時消失，所以本 MOD 收錄它 `42/media` 的內容（改動見下段），讓這些物品照舊載入。著作權屬原作者，不適用本專案的 MIT，本專案不對其另行授權。原作者 ProduktFrosch 在他的 [B42] Bag Upgrade Plus（Workshop [3403697073](https://steamcommunity.com/sharedfiles/filedetails/?id=3403697073)）留言區 2025-12-26 的最後一則留言寫道：「Anyone who would like to update or improve my mods is free to do so. I only have one request... please mention my name if you re-upload one of my mods.」Alaet 版是依此許可更新的版本，Alaet 自己另加的部分沒有找到另外的條款。
 
