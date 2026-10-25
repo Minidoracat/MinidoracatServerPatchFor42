@@ -5,6 +5,7 @@
 --   lua scripts/test_semitruck_restore_throttle.lua --mutants   另對補丁植入錯誤，確認測試抓得到
 -- 引擎模擬：專用伺服器先載入全部 MOD 的 shared/ 再載入 server/（GameServer.java:1469-1471），Lua 全部載入且沙盒讀入後
 -- 觸發 OnGameBoot（:1481-1496）；Events.X 是一般 Lua 表（Event.java:78-83），每個 callback 各自 protectedCall（:52-64）。
+-- 假時鐘：getTimestampMs 回傳模擬的真實時間，預設每遊戲分鐘前進 2500 ms（本服一天 1 小時）；快轉情境另給更短的間隔。
 
 local UP = "D:/SteamLibrary/steamapps/workshop/content/108600/3409472393/mods/rSemiTruck/common/media/lua/server/MSW_Common_Commands.lua"
 local PATCH = "MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/lua/shared/Patches/rSemiTruck/MSP_SemiTruckRestoreThrottle.lua"
@@ -64,7 +65,7 @@ local function printedMatching(text)
     return n
 end
 
-local effects, counters, activeMods, modDataStore, minute, inRestore
+local effects, counters, activeMods, modDataStore, minute, clock, inRestore
 local function log(line) effects[#effects + 1] = { minute = minute, line = line } end
 
 local function newEvent(name)
@@ -159,7 +160,7 @@ end
 
 local function resetEnv(modList, server)
     effects, printed, counters, modDataStore = {}, {}, {}, {}
-    minute, inRestore = 0, false
+    minute, clock, inRestore = 0, 5000000, false
     activeMods = {}
     for _, id in ipairs(modList) do activeMods[id] = true; activeMods["\\" .. id] = true end
     Events = setmetatable({}, { __index = function(t, k) local e = newEvent(k); rawset(t, k, e); return e end })
@@ -169,6 +170,7 @@ local function resetEnv(modList, server)
     isServer = function() return server ~= false end
 end
 
+function getTimestampMs() return clock end
 function isClient() return false end
 function getActivatedMods() return { contains = function(_, id) return activeMods[id] == true end } end
 function getFilenameOfClosure(fn) return (where(fn):gsub("\\", "/")) end
@@ -193,18 +195,21 @@ local function boot(opts)
     trigger(Events.OnGameBoot)
 end
 
--- 模擬世界：timeline[m] 在第 m 遊戲分鐘開始前把車加入已載入清單
-local function run(minutes, timeline)
-    for m = 1, minutes do
-        minute = m
-        for _, v in ipairs((timeline and timeline[m]) or {}) do world.vehicles[#world.vehicles + 1] = v end
+-- 模擬世界：每次觸發前遊戲分鐘加一、假時鐘前進 msPerMinute（預設 2500）；minute 在同一次 boot 內接續累加，
+-- timeline[m] 在第 m 遊戲分鐘開始前把車加入已載入清單
+local function run(minutes, timeline, msPerMinute)
+    for _ = 1, minutes do
+        minute = minute + 1
+        clock = clock + (msPerMinute or 2500)
+        for _, v in ipairs((timeline and timeline[minute]) or {}) do world.vehicles[#world.vehicles + 1] = v end
         local before = counters.restoreScans or 0
         inRestore = true
         trigger(Events.EveryOneMinute)
         inRestore = false
         if (counters.restoreScans or 0) > before then
             counters.scanMinutes = counters.scanMinutes or {}
-            counters.scanMinutes[#counters.scanMinutes + 1] = m
+            counters.scanMinutes[#counters.scanMinutes + 1] = minute
+            counters.lastScanClock = clock
         end
     end
 end
@@ -327,6 +332,19 @@ local function suite()
         and Events.EveryOneMinute.Add == Events.EveryOneMinute.engineAdd)
     run(90, baseTimeline(false))
     check("重複載入：節流週期不變（1、31、61）", scanMinutes() == "1,31,61")
+
+    -- 10. 全員睡覺快轉：遊戲時間加速（GameTime.java:975-976），EveryOneMinute 每次時間更新最多觸發一次（:642-645），
+    -- 觸發間隔縮到一秒以下（這裡取 100 ms）。節流要看真實時間，計觸發次數會縮成每幾秒全掃一次
+    boot({})
+    run(90, baseTimeline(false), 100)
+    check("快轉：9 秒內連續觸發 90 次只跑第一次", scanMinutes() == "1")
+    run(1, nil, counters.lastScanClock + 74999 - clock)
+    check("快轉：距上次 74.999 秒仍不跑", scanMinutes() == "1")
+    run(1, nil, 1)
+    check("快轉：距上次滿 75 秒才再跑（第 92 次觸發）", scanMinutes() == "1,92")
+    run(1, nil, -3600000)
+    run(30, nil, 2500)
+    check("系統時鐘倒退：照常執行並從新時間重新起算（第 93、123 次）", scanMinutes() == "1,92,93,123")
 end
 
 rawPrint("== rSemiTruck 載入後修復節流")
@@ -335,8 +353,12 @@ suite()
 if arg and arg[1] == "--mutants" then
     local mutants = {
         { name = "改包第一個回呼（舊存檔搬移）", from = "if registered == 2 then", to = "if registered == 1 then" },
-        { name = "週期差一（每 31 分鐘）", from = "skip = EVERY_MINUTES - 1", to = "skip = EVERY_MINUTES" },
-        { name = "第一次就跳過", from = "local skip = 0", to = "local skip = EVERY_MINUTES - 1" },
+        { name = "滿 75 秒還跳過（差一）", from = "now - lastRun < INTERVAL_MS", to = "now - lastRun <= INTERVAL_MS" },
+        { name = "第一次就跳過", from = "local lastRun", to = "local lastRun = getTimestampMs()" },
+        { name = "執行後不更新上次時間", from = "lastRun = now", to = "lastRun = lastRun or now" },
+        { name = "系統時鐘倒退就卡住", from = "now >= lastRun and ", to = "" },
+        { name = "改回計次（每次觸發當成 2.5 秒）", from = "local now = getTimestampMs()",
+            to = "COUNT = (COUNT or 0) + 2500; local now = COUNT" },
         { name = "OnGameBoot 不換回 Add", from = "if event.Add == add then event.Add = engineAdd end", to = "" },
         { name = "不檢查上游註冊數", from = "if registered ~= 2 then", to = "if false then" },
         { name = "忽略沙盒開關", from = "options.SlimSemiTruckRestore == false", to = "false" },

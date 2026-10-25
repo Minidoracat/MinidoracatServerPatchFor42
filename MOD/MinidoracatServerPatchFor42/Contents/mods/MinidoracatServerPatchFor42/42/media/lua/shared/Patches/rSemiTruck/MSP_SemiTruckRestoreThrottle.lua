@@ -17,9 +17,14 @@ MSP_SemiTruckRestoreThrottle — rSemiTruck「載入後修復」回呼：沒載�
   以 `getFilenameOfClosure`（`LuaManager.java:7341-7347`）認出該檔傳進來的函式。該檔依序註冊兩個 EveryOneMinute 回呼
   （:2510 舊存檔搬移、:2574 本回呼），把第二個換成節流版再交給引擎，其他一律原樣轉交。`OnGameBoot`（Lua 全部載入且沙盒已讀入後，
   `GameServer.java:1481-1496`）換回 `Add`，確認該檔恰好註冊兩個才啟用。
-- 節流：上游回呼第一次照常執行，之後每 30 個遊戲分鐘（本服 75 秒）才執行一次。執行的仍是上游函式，照原本的條件在找到汽車拖車後
-  自行停下；差別只在「之後才載入的汽車拖車」要等下一次（最多 30 個遊戲分鐘）才補上車罩同步與舊容量鍵清理。汽車拖車的裝卸指令
-  本身會同步車罩（:2326、:2428），不受影響。舊存檔搬移那個回呼不動。
+- 節流：上游回呼第一次照常執行，之後距上次執行滿 75 秒真實時間才再執行（`getTimestampMs`＝`System.currentTimeMillis`，
+  `LuaManager.java:9291-9297`；系統時鐘倒退時照常執行、從新時間重新起算）。平常本服 75 秒＝30 個遊戲分鐘。
+  不用「每 N 次 EveryOneMinute 執行一次」計次：EveryOneMinute 是遊戲分鐘，每次時間更新最多觸發一次（`GameTime.java:642-645`），
+  多人伺服器全員睡覺快轉時遊戲時間加速（`GameTime.java:975-976`），幾乎每次更新都觸發，每 30 次一跑會縮成每幾秒全掃一次。
+  執行的仍是上游函式，照原本的條件在找到汽車拖車後自行停下；差別只在「之後才載入的汽車拖車」要等下一次（最多 75 秒）才補上
+  車罩同步與舊容量鍵清理。汽車拖車的裝卸指令本身會同步車罩（:2326、:2428），不受影響。
+- 舊存檔搬移那個回呼（:2510-2514，每遊戲分鐘對每台已載入的車做一次 pcall＋getPartById）不動：成本沒實測，
+  正式機效能取樣看到它上榜再一起節流。
 
 【為什麼不改上游】他人的 Workshop MOD，本服不重新發布；已在上游 Workshop 討論區回報並附一行修法，作者修好後本補丁即可退場。
 
@@ -34,7 +39,7 @@ EveryOneMinute 註冊數不是 2（上游改檔名、改註冊方式或增減回
 local PREFIX = "[MinidoracatServerPatchFor42][rSemiTruck]"
 local MOD_ID = "rSemiTruck"
 local UPSTREAM_FILE = "/lua/server/msw_common_commands.lua"
-local EVERY_MINUTES = 30
+local INTERVAL_MS = 75000 -- 真實時間；不用 EveryOneMinute 計次，原因見檔頭【修法】
 
 local mods = getActivatedMods()
 if not isServer() or not (mods:contains(MOD_ID) or mods:contains("\\" .. MOD_ID)) then return end
@@ -48,14 +53,12 @@ local restoreLine
 local active = false
 
 local function throttle(upstream)
-    local skip = 0
+    local lastRun -- 上次執行上游時的 getTimestampMs()
     return function(...)
         if active then
-            if skip > 0 then
-                skip = skip - 1
-                return
-            end
-            skip = EVERY_MINUTES - 1
+            local now = getTimestampMs()
+            if lastRun and now >= lastRun and now - lastRun < INTERVAL_MS then return end
+            lastRun = now
         end
         return upstream(...)
     end
@@ -90,6 +93,6 @@ Events.OnGameBoot.Add(function()
         return
     end
     active = true
-    print(string.format("%s restore throttle installed (post-load vehicle scan every %d game minutes, line %s)",
-        PREFIX, EVERY_MINUTES, tostring(restoreLine)))
+    print(string.format("%s restore throttle installed (post-load vehicle scan at most every %d s real time, line %s)",
+        PREFIX, INTERVAL_MS / 1000, tostring(restoreLine)))
 end)
