@@ -2,6 +2,7 @@
 -- server/vfx_agingmanager.lua 與 server/vfx_storydistribution.lua（本機 Steam 訂閱副本），同一個模擬世界各跑一次「上游原樣」與
 -- 「補丁」，逐幀比對三個上游的內部狀態（aging 掃描佇列與登記表、story 待處理建築）、引擎回呼清單、所有物品變動與亂數序列、
 -- 上游 log，以及最後的存檔內容。Mods= 兩種順序都跑：本 MOD 在 VFE 之前（birthday 併入合併回呼）、VFE 在前（birthday 留給引擎）。
+-- 另驗安裝時關掉 VFX.AgingIceDebug 後冷凍庫／冰箱／一般容器的融冰速率不變。
 --   lua scripts/test_vfe_load_slim.lua             等價差分、邊界、回退
 --   lua scripts/test_vfe_load_slim.lua --mutants   另對補丁植入錯誤，確認差分抓得到
 --   lua scripts/test_vfe_load_slim.lua --bench     另印每格／每 chunk 的上游呼叫數、Java 呼叫替身數與離線耗時
@@ -1142,6 +1143,45 @@ if upstreamCurrent then
         and on.patchPrints[1]:find("birthday merged", 1, true) ~= nil
         and Events.LoadGridsquare.Add == Events.LoadGridsquare.engineAdd and #Events.LoadGridsquare.list == 1
         and sourceOf(Events.LoadGridsquare.list[1]) == PATCH.vfe)
+    -- 冰塊除錯旗標：安裝時關掉；冷凍庫、冰箱、一般容器的融冰速率（iceRate，aging 唯一用到 storage 的判斷）與開著時相同，
+    -- 只少了非冷凍容器的 isPowered
+    local iceInstalled = VFX.AgingIceDebug
+    local iceRate = upvalue(upvalue(VFX.TrackIceContainer, "touchIce"), "iceRate")
+    local iceStorage = upvalue(iceRate, "iceStorageStatus")
+    local function iceResults()
+        local out, powered = {}, 0
+        for _, kind in ipairs({ "freezer", "fridge", "plain" }) do
+            for _, on in ipairs({ true, false }) do
+                for _, temp in ipairs({ -5, 0.5, 4, 20 }) do
+                    for _, heat in ipairs({ 0.2, 1 }) do
+                        local c = { isFreezer = function() return kind == "freezer" end,
+                            isFridge = function() return kind == "fridge" end, getTemperature = function() return temp end,
+                            isPowered = function()
+                                if kind ~= "freezer" then powered = powered + 1 end
+                                return on
+                            end }
+                        local item = { getItemHeat = function() return heat end, getOutermostContainer = function() return c end }
+                        local r1, c1 = iceRate(item, iceStorage(c))
+                        local r2, c2 = iceRate(item)
+                        out[#out + 1] = table.concat({ kind, tostring(on), temp, heat, r1, c1, r2, c2 }, " ")
+                    end
+                end
+            end
+        end
+        return table.concat(out, "\n"), powered
+    end
+    local offRates, offPowered = iceResults()
+    VFX.AgingIceDebug = true
+    local onRates, onPowered = iceResults()
+    local paused = select(2, onRates:gsub("freezer paused", ""))
+    run(randomSpec(105), "upstream")
+    local upstreamIce = VFX.AgingIceDebug
+    run(randomSpec(105), "patched", { sandbox = { SlimVfeLoad = false } })
+    local disabledIce = VFX.AgingIceDebug
+    check(string.format("冰塊除錯：安裝時關掉、安裝行註明（上游原樣與沙盒關閉時照舊開著）；冷凍庫／冰箱／一般容器 48 種狀態的融冰速率與開著時相同"
+        .. "（冷凍暫停 %d 種）；非冷凍容器的 isPowered %d → %d 次", paused, onPowered, offPowered),
+        iceInstalled == false and on.patchPrints[1]:find("VFX.AgingIceDebug off", 1, true) ~= nil and upstreamIce == true
+        and disabledIce == true and offRates == onRates and paused > 0 and onPowered > 0 and offPowered == 0)
     local late = run(randomSpec(105), "patched", { order = "vfeFirst" })
     check("VFE 在前：印一行 installed 並註明 birthday 留給引擎、LoadGridsquare 是 birthday＋合併回呼",
         #late.patchPrints == 1 and late.patchPrints[1]:find("load slim installed", 1, true) ~= nil

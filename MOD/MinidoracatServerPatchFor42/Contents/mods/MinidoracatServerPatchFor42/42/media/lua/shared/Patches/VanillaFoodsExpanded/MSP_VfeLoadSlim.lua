@@ -59,6 +59,9 @@ upstream.json 有登記（上游宣告 On Lockdown，repo 不留上游快照，�
 - 失敗回退：shared 載入時以 getModFileReader 讀上游檔算雜湊。aging、story 與本檔核對時的不同，或預先取方法失敗，就什麼都不攔、
   印一行 NOT installed（上游原樣）；只有 birthday 不同時 birthday 留給引擎。到 OnInitGlobalModData 都沒攔到 aging／story 的註冊也印
   NOT installed。上游回呼出錯時印一行，不影響同一格的其他回呼（同引擎逐 callback 隔離）。
+- 冰塊除錯：上游 aging :6 預設 VFX.AgingIceDebug = true，只多做兩件事：:783 對非冷凍容器也呼叫 isPowered（結果只出現在 :1068-1088
+  的除錯 log；:790 的暫停判斷要求 storage.freezer），以及印 [VFX Aging Ice Tracking] log。aging 與 story 都接手、沙盒開著時設成 false
+  （安裝行註明）；沙盒關閉或 NOT installed 時不動。冷凍庫、冰箱、一般容器的融冰速率不變（scripts/test_vfe_load_slim.lua 逐一比對）。
 
 【為什麼不改上游】上游宣告 On Lockdown（不得修改、重新打包或散布）。本補丁不碰上游檔案、不含上游內容，只決定何時呼叫上游的回呼。
 
@@ -326,8 +329,10 @@ end, function()
         print(string.format("%s load slim NOT installed for the handler not seen (aging=%s, story=%s)%s;"
             .. " re-check upstream.json recheck notes", PREFIX, tostring(aging ~= nil), tostring(story ~= nil), note))
     elseif enabled then
+        -- 上游預設開著冰塊除錯：只多出 log 與非冷凍容器的 isPowered（:783；冷凍判斷 :790 只看冷凍庫的 powered）
+        VFX.AgingIceDebug = false
         print(PREFIX .. " load slim installed (LoadGridsquare merged and gated; story LoadChunk skipped within a cell load"
-            .. " when nothing can change" .. note .. ")")
+            .. " when nothing can change" .. note .. "; VFX.AgingIceDebug off)")
     end
 end)
 
