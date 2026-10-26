@@ -16,7 +16,7 @@
 
 ### 變更
 
-- **本補丁不再收錄 Bag Upgrade Plus，舊背包完全交給 Minidoracat Bags**：伺服器先前已經裝上 Minidoracat Bags，大家身上、背包欄、地上與箱子裡的 Plus 背包和裡面的東西都照樣在，只能取出、可以改裝成新背包，這些都和之前一樣。這一版起有幾處不同：Bag Upgrade Plus 自己的背包升級／降級配方消失，背包升級改用 Minidoracat Bags 的配方；舊背包的名稱改成 Minidoracat Bags 的寫法（例如「大背包（舊 Plus）」）；兩種 Plus 腰包照樣穿在原本的位置，但右鍵選單不再有「改穿正面／背面」；原 MOD 改過的飲料與玩偶照樣留在原處，變回原版物品。
+- **本補丁不再收錄 Bag Upgrade Plus，舊背包完全交給 Minidoracat Bags**：伺服器先前已經裝上 Minidoracat Bags，大家身上、背包欄、地上與箱子裡的 Plus 背包和裡面的東西都照樣在，只能取出、可以改裝成新背包，這些都和之前一樣。這一版起有幾處不同：Bag Upgrade Plus 自己的背包升級／降級配方消失，背包升級改用 Minidoracat Bags 的配方；舊背包的名稱改成 Minidoracat Bags 的寫法（例如「大型背包（舊 Plus）」「行李袋（舊 Plus）」）；兩種 Plus 腰包照樣穿在原本的位置，但右鍵選單不再有「改穿正面／背面」；原 MOD 改過的飲料與玩偶照樣留在原處，變回原版物品。
 
 > 技術要點：換上本版前，MOD 清單必須已經有 Minidoracat Bags（排在本補丁前面）；沒有 Minidoracat Bags 就換上本版開服，Plus 背包會連同內容物被刪除，之後再裝也找不回來。物品 ID 不變。原 MOD 的沙盒選項「升級背包生成機率」一併拿掉。舊背包的繁中名稱另外要模組翻譯包同一天更新才會換成新寫法。
 
