@@ -1,7 +1,7 @@
-[h1]Minidoracat Server Patch for B42 42.21.0-0.4.14[/h1]
-[i]2026-10-25[/i]
+[h1]Minidoracat Server Patch for B42 42.21.0-0.4.15[/h1]
+[i]2026-10-27[/i]
 
-[h3]🔄 變更[/h3]
+[h3]🔧 修正[/h3]
 [list]
-[*] [b]Vanilla Foods Expanded 的冰塊除錯紀錄不再寫進伺服器紀錄檔[/b]：Vanilla Foods Expanded 預設開著冰塊融化的除錯紀錄，有冰塊時會讓伺服器多做檢查、在紀錄檔寫除錯訊息；本補丁啟用時把它關掉。冰塊在冷凍庫、冰箱和一般容器裡的融化速度都和原本一樣。
+[*] [b]遊戲內 MOD 清單看不到本 MOD 的封面圖[/b]：從 0.2.0 起，MOD 清單裡本 MOD 的封面一直是空白。現在 MOD 清單會正常顯示封面。MOD 功能沒有受影響，更新後不用做任何設定。
 [/list]
