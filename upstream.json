@@ -699,7 +699,7 @@
         "shared/HiddenCarryEquip.lua",
         "../registries.lua"
       ],
-      "recheck": "上游 2026-10 下架，內容由本 MOD 收錄以保住存檔裡的 Plus 背包：42/media 的 scripts、clothing、fileGuidTable、lua/client 與 lua/shared 兩個 Lua 檔（路徑與上游相同，同時載入時互相覆蓋、只跑一份；殭屍換背包的 lua/server/BUP_ZombieOutfits.lua 在 2026-10-25 拿掉，同時載入上游時跑的是上游那份）、registries.lua（先查再註冊）、sandbox-options.txt 的 BagUpgradePlus.UpgradedBagSpawnChance（已沒有程式讀它，留到換成新背包 MOD 時一起清）、Translate 的 EN/CH/CN（CH/CN 取自 ModLang 的譯文）。delisted=true 時下架是預期狀態，Steam 又查得到才開 issue。重新上架後：比對檔案差異，決定改回上游（正式服 Mods=／WorkshopItems= 加回、本 MOD 刪掉收錄的檔案與這筆的 delisted，再 --ack）或繼續收錄；上游必須排在本 MOD 前面，否則它的 registries.lua 會因重複註冊丟例外。",
+      "recheck": "上游 2026-10 下架，內容由本 MOD 收錄以保住存檔裡的 Plus 背包：42/media 的 scripts（2026-10-27 起不含上游的 15 條配方：recipes/BUP_Recipes.txt 只留 module Base 的 imports，Base 底下查 BUP 物品名稱靠它；clothing/BUP_Crafted.txt 拿掉 MakeSheetSlingBagPlus）、clothing、fileGuidTable、lua/client 與 lua/shared 兩個 Lua 檔（路徑與上游相同，同時載入時互相覆蓋、只跑一份；殭屍換背包的 lua/server/BUP_ZombieOutfits.lua 在 2026-10-25 拿掉，同時載入上游時跑的是上游那份）、registries.lua（先查再註冊）、sandbox-options.txt 的 BagUpgradePlus.UpgradedBagSpawnChance（已沒有程式讀它，留到換成新背包 MOD 時一起清）、Translate 的 EN/CH/CN（CH/CN 取自 ModLang 的譯文）。delisted=true 時下架是預期狀態，Steam 又查得到才開 issue。重新上架後：比對檔案差異，決定改回上游（正式服 Mods=／WorkshopItems= 加回、本 MOD 刪掉收錄的檔案與這筆的 delisted，再 --ack）或繼續收錄；上游必須排在本 MOD 前面，否則它的 registries.lua 會因重複註冊丟例外。",
       "watch_files": [],
       "acked_title": "[B42.20] Bag Upgrade Plus",
       "delisted": true

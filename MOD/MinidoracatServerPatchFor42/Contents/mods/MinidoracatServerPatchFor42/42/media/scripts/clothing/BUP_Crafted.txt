@@ -21,22 +21,4 @@ module Base
 		WorldStaticModel     = SheetSlingBag_Ground,
 		Tags                 = base:isfirefuel;base:isfiretinder, 
 	}
-	craftRecipe MakeSheetSlingBagPlus 
-	{
-		timedAction          = MakeSheetSlingBag,
-		Time                 = 50,
-		Tags                 = InHandCraft;CanBeDoneInDark,
-        Category             = ExtraCraft,
-        NeedToBeLearn        = false,
-		xpAward              = Tailoring:15,
-		inputs
-		{
-			item 1 [Base.Sheet],
-			item 5 [Base.Money],
-		}
-		outputs
-		{
-			item 1 Base.SheetSlingBagPlus,
-		}
-	}
 }
