@@ -1,5 +1,5 @@
 --[[
-MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對「全部」綁定的遠端玩家重算穿戴簽章
+MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對綁定的遠端玩家重算穿戴簽章
 
 【上游】幻装衣橱：联机幻化 / Mirage Wardrobe [B42]（Workshop 3770186452，mod id MirageWardrobe42，
 核對版本為 upstream.json 的 acked_time_updated）。upstream.json 有登記，Workshop 更新時 Action 會開 issue。
@@ -7,28 +7,35 @@ MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對「全部」綁定�
 【缺陷】
 `MirageWardrobeCore.lua:7809` 把 `onAppearanceBeforeModelUpdate`（:7623）掛在 OnTick。它最後呼叫
 local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeCore.networkAppliedBindings`
-的每一位遠端玩家，對通過 :7597 閘門者呼叫 `getPhysicalWearSignature`（:4500）：每件 ItemVisual ×
-18 個身體部位 × 6 個 getter，每次讀取包兩個 pcall 再 tostring，最後 table.concat。沒有距離判斷、
-沒有節流。一般玩家客戶端的遠端玩家會衰減成附近的人，但 staff／admin 客戶端會收到全服玩家
-（PlayerPacket 的角色位階旁路），成本隨在線人數線性成長。
-2026-09-25 E2E（admin 帳號、正式服 17 人、非 debug）：這個 callback 佔主執行緒 68.9%，
-遊戲內 FPS 36–42／CPU Time 31ms；RTX 4090 使用率 18%。
+的每一位遠端玩家，對通過 :7597 閘門者先呼叫 `getPhysicalWearSignature`（:4500），再 `beginAppearanceRenderBridge`。
+簽章是每件 ItemVisual × 18 個身體部位 × 6 個 getter，每次讀取包兩個 pcall 再 tostring，最後 table.concat。
+沒有距離判斷、沒有節流，成本＝綁定的人數 × 每人每 tick 一次。staff／admin 客戶端會收到全服玩家
+（PlayerPacket 的角色位階旁路），一般客戶端在玩家聚集時一樣是十幾個人。
+- 2026-09-25 E2E（admin 帳號、正式服 17 人、非 debug）：這個 callback 佔主執行緒 68.9%，FPS 36–42／CPU Time 31ms。
+- 2026-10-28 正式服活動點（同畫面 13 人以上，全在範圍內）：這個 callback 佔主執行緒 75%，
+  CPU Time 59ms、FPS 16–22（開 -debug 的 admin 客戶端）；Lua 取樣有 92% 落在簽章函式。
 2026-08-16 已在 Workshop 討論區回報（附行號與三種修法），至今沒有回覆，之後的上游更新也沒修這段。
 
 【修法】
-移除原本的 OnTick 註冊，改掛包裝函式。每次呼叫原版前，把 `networkAppliedBindings` 暫時換成
-「在本機已載入格子上、且距本機玩家 ≤ RANGE 格」的子集，呼叫完立刻換回完整表。子集外的玩家
-不會被畫出來，也就不需要塑形橋接與簽章比對；走進範圍的下一個 tick 就會被納入，
-簽章與上次不同時照原版邏輯讓快照失效，外觀一樣正確。
-- 原版在呼叫中若改寫了子集（新增、移除、換 binding），寫回完整表；若整張表被換掉
-  （session 重置），不還原舊表。
-- 原版拋錯時仍先還原完整表，再原樣重拋，不吞例外。
-- 篩選本身出錯、非 MP 客戶端、沒有本機玩家時，直接走原版，行為與未安裝相同。
+移除原本的 OnTick 註冊，改掛包裝函式，做兩件事：
+1. 範圍：呼叫原版前把 `networkAppliedBindings` 暫時換成「在本機已載入格子上、且距本機玩家 ≤ RANGE 格」
+   的子集，呼叫完換回完整表。子集外的玩家不會被畫出來，不需要塑形橋接與簽章比對。
+2. 節流：子集裡每位玩家的簽章最多每 WEAR_INTERVAL_MS 算一次。原版 `onCleanAppearanceTick()`（:7640）
+   一返回，就把表再換成「這個 tick 到期的人」，原版迴圈只對他們算簽章、開橋；其餘的人在原版返回後，
+   由本補丁照 :7587-7597 的閘門呼叫 `beginAppearanceRenderBridge`，所以外觀每幀照樣套上，只是不重算簽章。
+   第一次看到的人把到期時間錯開到 WEAR_INTERVAL_MS 內，避免同一個 tick 一起算。
+   代價：別人衣服的血跡、髒污、破洞、補丁變化，最多晚 WEAR_INTERVAL_MS 才讓舊快照失效、重畫。
+- 原版在呼叫中改寫了子集或到期表（新增、移除、換 binding），寫回完整表；中途新加的 binding 當作到期。
+  整張表被換掉（session 重置）時不還原舊表，也不補開橋。
+- 原版拋錯時仍先還原完整表，再原樣重拋，不吞例外；這個 tick 不補開橋（和原版中途中止相同）。
+- `onCleanAppearanceTick` 沒經 `MirageWardrobeCore` 表呼叫（上游改了形狀）時換表不會發生，原版照舊處理整個子集，
+  本補丁印一行 wear throttle inactive，本次遊戲只剩範圍過濾。
+- 篩選本身出錯、非 MP 客戶端、沒有本機玩家時，直接走原版，行為與未安裝相同；沒有 `getTimestampMs` 時只做範圍過濾。
 被篩掉的玩家在 `onCleanAppearanceTick` 的 `hasCurrentNetworkBinding` 會回 false，但下一段
-會改查線上玩家清單，結果一樣是「追蹤中」，行為不變。
+會改查線上玩家清單，結果一樣是「追蹤中」，行為不變；換成到期表時 `onCleanAppearanceTick` 已經跑完。
 
 【為什麼不改上游】
-他人的 Workshop MOD，本服不重新發布；作者未回應回報。只在本服客戶端篩掉畫面外的玩家，
+他人的 Workshop MOD，本服不重新發布；作者未回應回報。只在本服客戶端篩掉畫面外的玩家、降低簽章比對頻率，
 不改塑形資料、網路協定或存檔。
 
 【軟依賴】
@@ -38,7 +45,9 @@ local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeC
 才算數：那時仍不符（函式或 OnTick API 不在）才印一行 NOT installed 後放棄，不猜。
 
 【上游更新時要重核】
-`onAppearanceBeforeModelUpdate` 是否仍掛在 OnTick 且仍經 `networkAppliedBindings` 遍歷遠端玩家；
+`onAppearanceBeforeModelUpdate` 是否仍掛在 OnTick、仍先以 `MirageWardrobeCore.onCleanAppearanceTick()` 呼叫，
+之後才經 `networkAppliedBindings` 遍歷遠端玩家；迴圈每人是否仍只做「簽章比對＋`beginAppearanceRenderBridge`」，
+閘門是否仍是 :7587-7597（本補丁照它判斷要不要替延後的人開橋）；
 `beginNetworkAppearanceRenderBridges` 是否已自己加距離判斷或節流（有的話本補丁退場）；
 tick 路徑內是否開始寫入 `networkAppliedBindings`（目前只有 MirageWardrobeNetwork.lua 的計分板與
 網路 handler 會寫）。
@@ -47,6 +56,18 @@ tick 路徑內是否開始寫入 `networkAppliedBindings`（目前只有 MirageW
 local PREFIX = "[MinidoracatServerPatchFor42][MirageWardrobe42]"
 local RANGE = 100 -- 格；大於客戶端 chunk 串流半徑（寬 19 chunk ≈ 76 格），畫面內的人都在範圍內
 local RANGE2 = RANGE * RANGE
+local WEAR_INTERVAL_MS = 1000 -- 同一位玩家兩次簽章比對的最短間隔
+local SPREAD_SLOTS = 16 -- 第一次看到的人，到期時間依序錯開 WEAR_INTERVAL_MS / SPREAD_SLOTS
+local STALE_MS = 60000 -- 到期後這麼久都沒再出現在範圍內，就丟掉他的到期時間
+local PRUNE_EVERY_MS = 10000
+
+local stats = { due = 0, deferredBridges = 0 } -- E2E 讀：到期（允許算簽章）的人次、替延後的人開橋的次數
+local nextDue = {} -- [IsoPlayer] = 下次可以算簽章的時間（getTimestampMs）
+local spreadSlot = 0
+local nextPrune = 0
+local throttleOn = false
+local ctx = nil -- 包裝函式呼叫原版期間的狀態
+local cleanTarget = nil -- 最近一次被暫換的 onCleanAppearanceTick（不清掉：萬一有人留著 cleanHook，照樣呼叫得到原版）
 
 -- 回傳子集；本機玩家不存在時回 nil（不篩選）
 local function nearbySubset(full, localPlayer)
@@ -74,29 +95,138 @@ local function copy(t)
     return out
 end
 
+-- 原版改寫過的 key 寫回完整表
+local function mergeBack(full, before, current)
+    for key, value in pairs(before) do
+        if current[key] ~= value then full[key] = current[key] end
+    end
+    for key, value in pairs(current) do
+        if before[key] == nil then full[key] = value end
+    end
+end
+
+-- 這個 tick 不算簽章的 key；回傳 key 集合與個數
+local function planDeferrals(subset, localPlayer, now)
+    local deferKeys, count = {}, 0
+    for key, binding in pairs(subset) do
+        local player = type(binding) == "table" and binding.player or nil
+        if player and player ~= localPlayer then
+            local due = nextDue[player]
+            if due == nil then
+                spreadSlot = spreadSlot % SPREAD_SLOTS + 1
+                nextDue[player] = now + spreadSlot * WEAR_INTERVAL_MS / SPREAD_SLOTS
+                deferKeys[key] = true
+                count = count + 1
+            elseif now >= due or due - now > WEAR_INTERVAL_MS then -- 後者：系統時間往回調
+                nextDue[player] = now + WEAR_INTERVAL_MS
+                stats.due = stats.due + 1
+            else
+                deferKeys[key] = true
+                count = count + 1
+            end
+        end
+    end
+    if now >= nextPrune then
+        for player, due in pairs(nextDue) do
+            if now - due > STALE_MS then nextDue[player] = nil end
+        end
+        nextPrune = now + PRUNE_EVERY_MS
+    end
+    return deferKeys, count
+end
+
+-- onCleanAppearanceTick 返回後：表換成到期的人，延後的人另存
+local function swapToDue()
+    local c = ctx
+    if not c or c.swapped or c.core.networkAppliedBindings ~= c.subset then return end
+    local due, deferred = {}, {}
+    for key, binding in pairs(c.subset) do
+        if c.deferKeys[key] and c.before[key] == binding then
+            deferred[key] = binding
+        else
+            due[key] = binding
+        end
+    end
+    c.due, c.dueBefore, c.deferred, c.swapped = due, copy(due), deferred, true
+    c.core.networkAppliedBindings = due
+end
+
+local function afterClean(...)
+    swapToDue()
+    return ...
+end
+
+local function cleanHook(...)
+    return afterClean(cleanTarget(...))
+end
+
+-- 照原版迴圈的閘門（MirageWardrobeCore.lua:7587-7597）替延後的人開橋，只是不算簽章
+local function bridgeDeferred(core, deferred, localPlayer, requested)
+    local states = core.networkPlayerData or {}
+    local pending = core.cleanAppearancePending or {}
+    for key, binding in pairs(deferred) do
+        local player = binding.player
+        local state = states[key]
+        if player ~= localPlayer and type(state) == "table" and binding.state == state then
+            local tracks = core.shouldTrackAppearance(player, state) == true
+            if tracks or pending[player] ~= nil or requested[player] then
+                core.beginAppearanceRenderBridge(player)
+                stats.deferredBridges = stats.deferredBridges + 1
+            end
+        end
+    end
+end
+
 local function makeWrapper(core, original)
     return function()
         local full = core.networkAppliedBindings
         if not (isClient and isClient()) or type(full) ~= "table" then
             return original()
         end
-        local ok, subset = pcall(nearbySubset, full, getPlayer and getPlayer() or nil)
+        local localPlayer = getPlayer and getPlayer() or nil
+        local ok, subset = pcall(nearbySubset, full, localPlayer)
         if not ok or not subset then
             return original()
         end
-        local before = copy(subset)
-        core.networkAppliedBindings = subset
-        local called, err = pcall(original)
-        if core.networkAppliedBindings == subset then
-            core.networkAppliedBindings = full
-            for key, value in pairs(before) do
-                if subset[key] ~= value then full[key] = subset[key] end
-            end
-            for key, value in pairs(subset) do
-                if before[key] == nil then full[key] = value end
+        local c = { core = core, subset = subset, before = copy(subset), swapped = false }
+        local hooked = false
+        local clean = core.onCleanAppearanceTick
+        if throttleOn and type(clean) == "function" then
+            local planned, deferKeys, count = pcall(planDeferrals, subset, localPlayer, getTimestampMs())
+            if planned and count > 0 then
+                c.deferKeys = deferKeys
+                -- 原版迴圈的 requestedPlayers（:7633-7639）在 onCleanAppearanceTick 之前取
+                c.requested = {}
+                for player in pairs(core.cleanAppearancePending or {}) do
+                    if player ~= localPlayer then c.requested[player] = true end
+                end
+                cleanTarget = clean
+                core.onCleanAppearanceTick = cleanHook
+                hooked = true
             end
         end
+        ctx = c
+        core.networkAppliedBindings = subset
+        local called, err = pcall(original)
+        ctx = nil
+        if hooked and core.onCleanAppearanceTick == cleanHook then
+            core.onCleanAppearanceTick = clean
+        end
+        local current = core.networkAppliedBindings
+        local restored = current == subset or (c.swapped and current == c.due)
+        if restored then
+            core.networkAppliedBindings = full
+            mergeBack(full, c.before, subset)
+            if c.swapped then mergeBack(full, c.dueBefore, c.due) end
+        end
         if not called then error(err, 0) end
+        if not restored then return end
+        if c.swapped then
+            bridgeDeferred(core, c.deferred, localPlayer, c.requested)
+        elseif hooked then
+            throttleOn = false
+            print(PREFIX .. " wear throttle inactive: onCleanAppearanceTick was not called through MirageWardrobeCore; re-check upstream.json recheck notes")
+        end
     end
 end
 
@@ -126,7 +256,9 @@ local function install(final)
     core.MSP_bridgeFilterWrapper = wrapper
     core.onAppearanceBeforeModelUpdate = wrapper
     installed = true
-    print(PREFIX .. " bridge filter installed (range=" .. RANGE .. ")")
+    throttleOn = type(getTimestampMs) == "function"
+    print(PREFIX .. " bridge filter installed (range=" .. RANGE .. ", wear throttle " ..
+            (throttleOn and (WEAR_INTERVAL_MS .. "ms") or "off: no getTimestampMs") .. ")")
 end
 
 install()
@@ -134,5 +266,8 @@ if not installed and Events and Events.OnGameBoot then
     Events.OnGameBoot.Add(function() install(true) end)
 end
 
--- 離線測試用（scripts/test_wardrobe_bridge_filter.lua）；遊戲內不會有人引用
-MSP_WardrobeBridgeFilter = { install = install, nearbySubset = nearbySubset, RANGE = RANGE }
+-- 離線測試（scripts/test_wardrobe_bridge_filter.lua）與 E2E 讀；遊戲內不會有人引用
+MSP_WardrobeBridgeFilter = {
+    install = install, nearbySubset = nearbySubset, RANGE = RANGE,
+    WEAR_INTERVAL_MS = WEAR_INTERVAL_MS, stats = stats,
+}
