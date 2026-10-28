@@ -1,7 +1,8 @@
 {
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/actiongroups/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/AnimSets/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
- "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/client/ArcadiaRefillablePropane_Client.lua": "58236b2a3e7c4d305d1fa9bec2b74787dbf0e49e6cfe18cec43af302fd33f360",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/client/ArcadiaRefillablePropane_Client.lua": "ba8bb25e55c940c671f4e8c51bf11c94fb0a8d48955561fe7c504971dfad0262",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/client/ArcadiaRefillablePropane_Viewpoint.lua": "2857cfdf8b08e6e44e2df6093c5cfc0f874c1e2c6c60aeaa8235957e34471d43",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/server/ArcadiaRefillablePropane_Server.lua": "88e11a53a7affbee5c61880eb07ed1d63c175cab50032d1f55717da5d8d77435",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_Shared.lua": "3df90e57bb7b785c052e965294c157f96a7c632719938aecc06c3b2b6419f5b2",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/ArcadiaRefillablePropane_TorchRecipeGuard.lua": "4bbdfab738d1054f40beb7e020aed7e85e7a76191c86108a89639bf57a1bf62a",
@@ -14,8 +15,16 @@
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/Translate/PTBR/Sandbox_PTBR.txt": "b8fde1a31aad0549ca2d7e7e8f3cd29655ab6fc33b0e8a2af6ab00011672d987",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/lua/shared/Translate/PTBR/UI_PTBR.txt": "e4f4764a61e728d932a9f593370cf75a9486c61e29f58414f868ba78952c09ee",
  "mods/ArcadiaRefillablePropaneTanks_B42/42/media/sandbox-options.txt": "23cc4dfc67f619eddac060303ed023d89c0763f96913ccd4ed4b14038e38cd7a",
- "mods/ArcadiaRefillablePropaneTanks_B42/42/mod.info": "5b0f34908104f23e648139828e196b7c94727890e973a45d68257d9cff5e52c1",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/empty.obj": "a2efbeb054d76d8b7ee26c6267116fe3ea08b6657d6165ca26031dc76a32e801",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/fossoil_bulk.obj": "0172b53f94d2ada11c6956ee525ad2ab4d7163e938125f080b2edf97b169c992",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/gas2go_bulk.obj": "b2e3493d3d25335239b168a7c738f375c79352f3847ec5bc018eb6625112c1dd",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/legacy_industrial.obj": "0a138d030bf1f255ebb05b357c811fb12628d8246d4a72c4b4b3d11d7b8f0feb",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/modern_industrial.obj": "98dd0c8e5b06859fd1898ed641ce64b25072381539735b263f96bf356696ac93",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/propane_models.mtl": "086e985cafabd0719c8c851c5d563fbb10942728e5507dcab9553732b5048c57",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/models/propane_palette.png": "e99bd94e2db6f74d8af3fc21023924767bccb738803b87d98b83cd6b0bbcf76c",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/media/voxel-studio/refillable-propane/pack.properties": "cc0b1b4b51b259324f0dbbce7aed9130dcadf75054a8d04362a4fdef6503ec0f",
+ "mods/ArcadiaRefillablePropaneTanks_B42/42/mod.info": "ad5c2f0df874b8c0b17ef6f0d04b19dc4ec87e462911c71960e09b509c7e08ba",
  "mods/ArcadiaRefillablePropaneTanks_B42/common/media/actiongroups/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
  "mods/ArcadiaRefillablePropaneTanks_B42/common/media/AnimSets/.keep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
- "mods/ArcadiaRefillablePropaneTanks_B42/mod.info": "5b0f34908104f23e648139828e196b7c94727890e973a45d68257d9cff5e52c1"
+ "mods/ArcadiaRefillablePropaneTanks_B42/mod.info": "ad5c2f0df874b8c0b17ef6f0d04b19dc4ec87e462911c71960e09b509c7e08ba"
 }
