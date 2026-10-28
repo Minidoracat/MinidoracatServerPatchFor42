@@ -1,4 +1,4 @@
--- 離線測試：MSP_WardrobeBridgeFilter（Mirage Wardrobe 塑形橋接只處理附近玩家，穿戴簽章每人節流）。
+-- 離線測試：MSP_WardrobeBridgeFilter（Mirage Wardrobe 塑形橋接只處理附近、畫面內的玩家，穿戴簽章每人節流）。
 --   lua scripts/test_wardrobe_bridge_filter.lua             行為與邊界
 --   lua scripts/test_wardrobe_bridge_filter.lua --mutants   另對補丁植入錯誤，確認真上游差分抓得到
 --   lua scripts/test_wardrobe_bridge_filter.lua --bench     另印上游原樣與補丁每 tick 的成本（標準 Lua，只看比例）
@@ -6,7 +6,9 @@
 --       呼叫後完整表還原／原版改寫子集寫回／整表被換掉不還原／原版拋錯先還原再重拋／
 --       非 MP 客戶端與無本機玩家直接透傳／重複安裝不疊／形狀不符只在 OnGameBoot 印 NOT installed 一次／
 --       上游 shared 先建表、client 檔晚載入時不誤報。
--- 真上游段（R1–R8）：載入本機 Steam 訂閱裡未修改的 Mirage Wardrobe，上游原樣 vs 補丁差分（見該段開頭）。
+-- 真上游段（R1–R8 節流，R9–R13 畫面過濾）：載入本機 Steam 訂閱裡未修改的 Mirage Wardrobe，上游原樣 vs 補丁差分（見該段開頭）。
+-- R9–R13 另照引擎模擬模型重建（ModelManager.update 在 OnTick 之後，重建時看橋開著沒有）與 render（Core.StartFrame
+-- 以本機玩家當下位置重新置中鏡頭，IsoGridSquare.IsOnScreen 決定畫不畫），比較每 tick 畫出來的外觀。
 local FILE = "MOD/MinidoracatServerPatchFor42/Contents/mods/MinidoracatServerPatchFor42/42/media/lua/client/Patches/MirageWardrobe42/MSP_WardrobeBridgeFilter.lua"
 
 local pass, fail = 0, 0
@@ -194,6 +196,7 @@ end
 local UP_NET_SRC, UP_CORE_SRC, PATCH_SRC = readFile(UP_NET), readFile(UP_CORE), readFile(FILE)
 local MUTATION
 local TICK_MS = 16
+local UNIT = 64 -- tileScale 2 時一格在螢幕 x 方向的像素（IsoUtils.XToScreen(1, 0, 0, 0)）
 local PARTS = 18
 local GETTERS = { "getBlood", "getDirt", "getHole", "getBasicPatch", "getDenimPatch", "getLeatherPatch" }
 local LIBS = { "pairs", "ipairs", "type", "tostring", "tonumber", "pcall", "error", "select", "next", "table",
@@ -208,7 +211,7 @@ local function mock(name)
 end
 
 local function newWorld(opts)
-    local W = { clock = 0, checks = {}, bridged = {}, printed = {} }
+    local W = { clock = 0, checks = {}, bridged = {}, printed = {}, resetQueue = {}, resets = {}, model = {} }
     local env = {}
     for _, k in ipairs(LIBS) do env[k] = _G[k] end
     env.unpack = table.unpack
@@ -233,8 +236,23 @@ local function newWorld(opts)
     local scripts = { FindItem = function(_, name) return { name = name } end }
     env.getScriptManager = function() return scripts end
     env.CLEAN_DIRECT = function() end -- 只有模擬「上游不經表呼叫 onCleanAppearanceTick」的情境會用
+    if opts.camera then -- 鏡頭 API（tileScale 2：一格在螢幕 x 方向 64 像素）；沒有時補丁不做畫面過濾
+        env.IsoCamera = {
+            getOffX = function() return W.cam.offX end, getOffY = function() return W.cam.offY end,
+            getOffscreenWidth = function() return W.cam.w end, getOffscreenHeight = function() return W.cam.h end,
+            getRightClickOffX = function() return 0 end, getRightClickOffY = function() return 0 end,
+        }
+        env.IsoUtils = {
+            XToScreen = function(x, y) return (x - y) * UNIT end,
+            YToScreen = function(x, y, z) return (x + y) * UNIT / 2 - 3 * z * UNIT end,
+        }
+        env.getNumActivePlayers = function() return W.numPlayers or 1 end
+    end
     setmetatable(env, { __index = function(t, k)
-        if k:find("^Mirage") or k:find("^MSP_") then return nil end
+        -- 鏡頭 API 只在 opts.camera 時給（上面已 rawset），否則照遊戲沒有這些全域時處理
+        if k:find("^Mirage") or k:find("^MSP_") or k == "IsoCamera" or k == "IsoUtils" or k == "getNumActivePlayers" then
+            return nil
+        end
         local v = mock(k)
         rawset(t, k, v)
         return v
@@ -244,11 +262,18 @@ local function newWorld(opts)
     assert(load(opts.coreTransform and opts.coreTransform(UP_CORE_SRC) or UP_CORE_SRC, "@" .. UP_CORE, "t", env))()
     local core = env.MirageWardrobeCore
     W.core = core
-    core.endAppearanceRenderBridges = function() return true, 0 end
+    -- 橋：開成的記在 appearanceRenderBridges（上游的開橋紀錄），原版每 tick 開頭與 OnPostRender 收掉
+    core.appearanceRenderBridges = {}
+    core.endAppearanceRenderBridges = function()
+        for p in pairs(core.appearanceRenderBridges) do core.appearanceRenderBridges[p] = nil end
+        return true, 0
+    end
     core.onCleanAppearanceTick = function() if W.onClean then W.onClean(W) end end
     core.beginAppearanceRenderBridge = function(p)
         W.bridged[#W.bridged + 1] = p.name
         if W.onBridge then W.onBridge(p) end
+        if W.bridgeFail and W.bridgeFail(p) then return false end
+        core.appearanceRenderBridges[p] = true
         return true
     end
     core.shouldTrackAppearance = function(p) return p.tracked == true end
@@ -293,6 +318,13 @@ local function newPlayer(W, name, x, y, o)
     function p:getX() return self.x end
     function p:getY() return self.y end
     function p:getCurrentSquare() return self end
+    function p:getZ() return self.z or 0 end
+    function p:getPlayerNum() return 0 end
+    function p:resetModelNextFrame() -- 只記補丁的呼叫；劇本裡的原生重建直接排進 resetQueue
+        W.resetQueue[self] = true
+        W.resets[name] = W.resets[name] or {}
+        table.insert(W.resets[name], W.tickNo)
+    end
     return p
 end
 
@@ -302,14 +334,35 @@ local function bind(W, key, p, stale)
     W.full[key] = { player = p, state = stale and { stale = true } or state }
 end
 
+-- 引擎這一幀畫不畫這個人：IsoGridSquare.IsOnScreen（非樹木格）照抄，FBORenderCell.renderPlayer 先看它
+local function engineOnScreen(W, p)
+    local x, y, z = math.floor(p.x), math.floor(p.y), math.floor(p.z or 0)
+    local sx = (x - y) * UNIT - W.cam.offX
+    local sy = (x + y) * UNIT / 2 - z * 3 * UNIT - W.cam.offY
+    return sx + UNIT > 0 and sy + UNIT > 0 and sx - UNIT < W.cam.w and sy - 3 * UNIT < W.cam.h
+end
+
 local function tick(W, dt)
     W.clock = W.clock + (dt or TICK_MS)
+    W.tickNo = (W.tickNo or 0) + 1
     W.bridged = {}
     if W.beforeTick then W.beforeTick(W) end
     local handlers = {}
     for i, fn in ipairs(W.env.Events.OnTick.handlers) do handlers[i] = fn end
     for _, fn in ipairs(handlers) do fn() end
     table.sort(W.bridged)
+    if W.cam then
+        -- ModelManager.update（OnTick 之後）：排了重建的人，看這時橋開著沒有，決定模型用幻化還是實體衣物；
+        -- render：Core.StartFrame 以本機玩家當下的位置重新置中鏡頭，引擎畫面上的人記下畫出來的外觀；OnPostRender 收橋
+        local bridges = W.core.appearanceRenderBridges
+        for p in pairs(W.resetQueue) do W.model[p] = bridges[p] and "mirage" or "real" end
+        W.resetQueue, W.drawn = {}, {}
+        W:look(W.localPlayer.x, W.localPlayer.y)
+        for _, p in pairs(W.P) do
+            if engineOnScreen(W, p) then W.drawn[p.name] = W.model[p] end
+        end
+        W.core.endAppearanceRenderBridges()
+    end
     return W.bridged
 end
 
@@ -354,6 +407,164 @@ local function cleanNotThroughTable(src)
     local s, e = src:find("MirageWardrobeCore.onCleanAppearanceTick()", fs or #src, true)
     if not fs or not s then error("上游 onAppearanceBeforeModelUpdate 不再經表呼叫 onCleanAppearanceTick：照 upstream.json recheck 重核") end
     return src:sub(1, s - 1) .. "CLEAN_DIRECT()" .. src:sub(e + 1)
+end
+
+-- 有鏡頭的世界：本機 L 在 (1000, 1000)，鏡頭 1920×1080、zoom 1、置中在 look(x, y)；
+-- 每位玩家照引擎模擬模型：一開始是幻化（之前拍過），之後每次重建看當時橋開著沒有
+local function viewWorld(patch)
+    local W = newWorld({ patch = patch, camera = true })
+    W.localPlayer = newPlayer(W, "L", 1000, 1000)
+    W.P = {}
+    function W:look(x, y)
+        self.cam = { offX = (x - y) * UNIT - 960, offY = (x + y) * UNIT / 2 - 540, w = 1920, h = 1080 }
+    end
+    W:look(1000, 1000)
+    return W
+end
+
+local function addPlayer(W, name, x, y, o)
+    local p = newPlayer(W, name, x, y, o)
+    p.z = o and o.z
+    W.P[name] = p
+    bind(W, "k" .. name, p)
+    W.model[p] = p.tracked and "mirage" or "real"
+    return p
+end
+
+local function drawnKey(W)
+    local out = {}
+    for name, look in pairs(W.drawn) do out[#out + 1] = name .. "=" .. look end
+    table.sort(out)
+    return table.concat(out, ",")
+end
+
+local function has(list, name)
+    for _, n in ipairs(list) do if n == name then return true end end
+    return false
+end
+
+-- 畫面過濾：上游原樣 vs 補丁，比每 tick 開橋名單與畫出來的外觀
+local function viewSuite()
+    -- R9 A 在畫面上；V、D（不追蹤）從畫面外 40 格走進來；O 在範圍內、畫面外；Z 在三樓，換算後落在畫面內。
+    -- 第 5 tick 引擎重建 V、O 的模型（動作結束這類）；第 301 tick 本機傳送到 O 旁邊，鏡頭直接跳過去
+    local function walkIn(patch)
+        local W = viewWorld(patch)
+        addPlayer(W, "A", 1002, 1000, { tracked = true })
+        addPlayer(W, "V", 1040, 1000, { tracked = true })
+        addPlayer(W, "D", 1040, 1001)
+        addPlayer(W, "O", 1000, 1060, { tracked = true })
+        addPlayer(W, "Z", 1016, 1016, { tracked = true, z = 3 })
+        W.beforeTick = function(w)
+            for _, p in ipairs({ w.P.V, w.P.D }) do p.x = math.max(1010, p.x - 0.1) end
+            if w.tickNo == 5 then w.resetQueue[w.P.V], w.resetQueue[w.P.O] = true, true end
+            if w.tickNo == 301 then
+                w.localPlayer.y = 1058
+                w:look(1000, 1058)
+            end
+        end
+        return W
+    end
+    local base, pat = walkIn(false), walkIn(true)
+    local sameDrawn, drawnBridged, oSkipped, oBase, setup = true, true, true, true, false
+    local vFirstBridged, vFirstDrawn, oFirstAfterJump
+    for _ = 1, 330 do
+        local b, p = tick(base), tick(pat)
+        local t = pat.tickNo
+        if drawnKey(base) ~= drawnKey(pat) then sameDrawn = false end
+        for name in pairs(base.drawn) do
+            if has(b, name) and not has(p, name) then drawnBridged = false end
+        end
+        if t <= 300 then
+            if has(p, "O") then oSkipped = false end
+            if not has(b, "O") then oBase = false end
+        elseif not oFirstAfterJump and has(p, "O") then
+            oFirstAfterJump = t
+        end
+        if not vFirstBridged and has(p, "V") then vFirstBridged = t end
+        if not vFirstDrawn and pat.drawn.V then vFirstDrawn = t end
+        if t == 100 then setup = pat.model[pat.P.V] == "real" and base.model[base.P.V] == "mirage" end
+    end
+    local vr, orr = pat.resets.V or {}, pat.resets.O or {}
+    check("R9 setup: engine rebuild while off screen used physical clothes (patched), mirage (upstream)", setup)
+    check("R9 view: drawn appearance identical to upstream on every tick", sameDrawn)
+    check("R9 view: every player the engine draws and upstream bridges is bridged", drawnBridged)
+    check("R9 view: in range but off screen -> skipped (upstream bridges it every tick)", oSkipped and oBase)
+    check("R9 view: walking in -> one rebuild, on the first bridged tick, before the first drawn tick",
+        #vr == 1 and vr[1] == vFirstBridged and vFirstDrawn ~= nil and vr[1] < vFirstDrawn)
+    check("R9 view: camera jump -> rebuilt on the jump tick and drawn as mirage",
+        #orr == 1 and orr[1] == 301 and oFirstAfterJump == 301 and pat.drawn.O == "mirage")
+    check("R9 view: untracked player (never bridged) never rebuilt", pat.resets.D == nil)
+    check("R9 view: offView counted", pat.filter.stats.offView > 0)
+
+    -- R10 在畫面邊外來回：進緩衝（離中心 19 格）後在 19、22 格（緩衝外、保留範圍內）間來回 10 次，
+    -- 再退到 30 格（保留範圍外）又回來
+    local H = viewWorld(true)
+    local hv = addPlayer(H, "V", 1030, 1000, { tracked = true })
+    H.beforeTick = function(w)
+        local t = w.tickNo
+        local dx = 19
+        if t <= 10 or (t > 210 and t <= 230) then dx = 30
+        elseif t <= 210 and math.floor((t - 11) / 10) % 2 == 1 then dx = 22 end
+        hv.x = 1000 + dx
+    end
+    for _ = 1, 250 do tick(H) end
+    local hr = H.resets.V or {}
+    check("R10 hysteresis: back and forth near the edge rebuilds once, leaving and returning rebuilds again",
+        #hr == 2 and hr[1] == 11 and hr[2] == 231)
+
+    -- R11 分割畫面：不做畫面過濾，開橋名單與上游相同
+    local function split(patch)
+        local S = viewWorld(patch)
+        S.numPlayers = 2
+        addPlayer(S, "A", 1002, 1000, { tracked = true })
+        addPlayer(S, "O", 1000, 1060, { tracked = true })
+        return S
+    end
+    local bs, ps = split(false), split(true)
+    local sameSplit = true
+    for _ = 1, 30 do if joined(tick(bs)) ~= joined(tick(ps)) then sameSplit = false end end
+    check("R11 split screen: no view filter, same players bridged as upstream", sameSplit and ps.resets.O == nil)
+
+    -- R12 走進來那幾個 tick 開橋失敗（快照重試中）：等第一次開成橋才重建
+    local function failing(patch)
+        local F = viewWorld(patch)
+        local v = addPlayer(F, "V", 1040, 1000, { tracked = true })
+        F.bridgeFail = function(p) return p == v and F.tickNo >= 190 and F.tickNo <= 230 end
+        F.beforeTick = function(w)
+            v.x = math.max(1010, v.x - 0.1)
+            if w.tickNo == 5 then w.resetQueue[v] = true end
+        end
+        return F
+    end
+    local bf, pf = failing(false), failing(true)
+    local sameFail = true
+    for _ = 1, 300 do
+        tick(bf); tick(pf)
+        if drawnKey(bf) ~= drawnKey(pf) then sameFail = false end
+    end
+    local fr = pf.resets.V or {}
+    check("R12 bridge failed on entry: rebuilt on the first tick the bridge opens, drawn appearance identical",
+        sameFail and #fr == 1 and fr[1] == 231)
+
+    -- R13 本機玩家在鏡頭更新之後才被傳送（OnPlayerUpdate、動作裡）：OnTick 時 IsoCamera 還是舊位置，render 前才重新置中
+    local function lateTeleport(patch)
+        local T = viewWorld(patch)
+        local o = addPlayer(T, "O", 1000, 1060, { tracked = true })
+        T.beforeTick = function(w)
+            if w.tickNo == 5 then w.resetQueue[o] = true end
+            if w.tickNo == 40 then w.localPlayer.y = 1058 end -- 不呼叫 look：IsoCamera 停在舊位置
+        end
+        return T
+    end
+    local bt, pt = lateTeleport(false), lateTeleport(true)
+    local sameLate = true
+    for _ = 1, 60 do
+        tick(bt); tick(pt)
+        if drawnKey(bt) ~= drawnKey(pt) then sameLate = false end
+    end
+    local lr = pt.resets.O or {}
+    check("R13 teleported after the camera update: rebuilt on the teleport tick, drawn appearance identical",
+        sameLate and #lr == 1 and lr[1] == 40 and pt.drawn.O == "mirage")
 end
 
 local function realSuite()
@@ -468,6 +679,8 @@ local function realSuite()
     check("R8 session reset mid-call: only the local player bridged in both",
         joined(tick(base8)) == "L" and joined(tick(pat8)) == "L")
     check("R8 session reset mid-call: new table kept", pat8.core.networkAppliedBindings == fresh)
+
+    viewSuite()
 end
 
 rawPrint("== 真上游差分（Mirage Wardrobe 本機訂閱）")
@@ -487,6 +700,15 @@ if arg and arg[1] == "--mutants" then
         { name = "不換回完整表", from = "core.networkAppliedBindings = full", to = "local _ = full" },
         { name = "吞掉上游例外", from = "if not called then error(err, 0) end", to = "" },
         { name = "形狀變了不關節流", from = "throttleOn = false\n            print(PREFIX", to = "print(PREFIX" },
+        { name = "畫面外也處理", from = "if keep and unit and player ~= localPlayer then", to = "if false and unit and player ~= localPlayer then" },
+        { name = "走進畫面不重建", from = "player:resetModelNextFrame()", to = "local _ = player" },
+        { name = "沒開成橋也重建", from = "if state == \"pending\" and type(bridges) == \"table\" and bridges[player] then", to = "if state == \"pending\" then" },
+        { name = "沒開成橋就不再等", from = "    shown = inView\n", to = "    for p in pairs(inView) do inView[p] = true end\n    shown = inView\n" },
+        { name = "沒有緩衝", from = "local VIEW_MARGIN = 4", to = "local VIEW_MARGIN = 0" },
+        { name = "沒有遲滯", from = "local VIEW_KEEP_MARGIN = 8", to = "local VIEW_KEEP_MARGIN = 4" },
+        { name = "忽略樓層", from = "- 3 * math.floor(player:getZ())", to = "- 0" },
+        { name = "分割畫面也篩", from = "getNumActivePlayers() > 1 then", to = "getNumActivePlayers() > 9 then" },
+        { name = "只看 IsoCamera 的偏移", from = "inRect(sx, sy, nowX, nowY, width, height, unit, pad)", to = "false" },
     }
     rawPrint("== 突變（每個都應至少讓一項 FAIL）")
     local survived = 0
