@@ -1,5 +1,5 @@
 --[[
-MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對綁定的遠端玩家重算穿戴簽章
+MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對綁定的遠端玩家重算穿戴簽章、來源簽章並開幻化橋
 
 【上游】幻装衣橱：联机幻化 / Mirage Wardrobe [B42]（Workshop 3770186452，mod id MirageWardrobe42，
 核對版本為 upstream.json 的 acked_time_updated）。upstream.json 有登記，Workshop 更新時 Action 會開 issue。
@@ -9,11 +9,15 @@ MSP_WardrobeBridgeFilter — Mirage Wardrobe 每個 tick 對綁定的遠端玩�
 local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeCore.networkAppliedBindings`
 的每一位遠端玩家，對通過 :7597 閘門者先呼叫 `getPhysicalWearSignature`（:4500），再 `beginAppearanceRenderBridge`。
 簽章是每件 ItemVisual × 18 個身體部位 × 6 個 getter，每次讀取包兩個 pcall 再 tostring，最後 table.concat。
+`beginAppearanceRenderBridge`（:5371）每次再經表呼叫 `getAppearanceSourceSignature`（:5401；:4575 逐件讀類型、
+部位、替代模型再 table.concat）判斷快照新不新。
 沒有距離判斷、沒有節流，成本＝綁定的人數 × 每人每 tick 一次。staff／admin 客戶端會收到全服玩家
 （PlayerPacket 的角色位階旁路），一般客戶端在玩家聚集時一樣是十幾個人。
 - 2026-09-25 E2E（admin 帳號、正式服 17 人、非 debug）：這個 callback 佔主執行緒 68.9%，FPS 36–42／CPU Time 31ms。
 - 2026-10-28 正式服活動點（同畫面 13 人以上，全在範圍內）：這個 callback 佔主執行緒 75%，
   CPU Time 59ms、FPS 16–22（開 -debug 的 admin 客戶端）；Lua 取樣有 92% 落在簽章函式。
+- 2026-10-29 正式服約 48 人（非 debug、第二輪之後）：這個 callback 活動中仍佔 10.6%，葉子函式 appendWear 1.13%、
+  getAppearanceSourceSignature 1.10%。
 2026-08-16 已在 Workshop 討論區回報（附行號與三種修法），至今沒有回覆，之後的上游更新也沒修這段。
 
 【修法】
@@ -32,16 +36,22 @@ local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeC
    在內就處理（之後才在別的 OnTick 回呼裡傳送本機玩家時，傳送後的第一幀照不到）。
    分割畫面（每個視窗各自 render）或 API 不在時不做這一步。
    代價：每有一人走進可視範圍，多一次模型重建（原版在每次原生重建後本來就會再重拍一次）。
-3. 節流：子集裡每位玩家的簽章最多每 WEAR_INTERVAL_MS 算一次。原版 `onCleanAppearanceTick()`（:7640）
+3. 節流：子集裡每位玩家的穿戴簽章與來源簽章最多每 WEAR_INTERVAL_MS 算一次。原版 `onCleanAppearanceTick()`（:7640）
    一返回，就把表再換成「這個 tick 到期的人」，原版迴圈只對他們算簽章、開橋；其餘的人在原版返回後，
-   由本補丁照 :7587-7597 的閘門呼叫 `beginAppearanceRenderBridge`，所以外觀每幀照樣套上，只是不重算簽章。
-   第一次看到的人把到期時間錯開到 WEAR_INTERVAL_MS 內，避免同一個 tick 一起算。
-   代價：別人衣服的血跡、髒污、破洞、補丁變化，最多晚 WEAR_INTERVAL_MS 才讓舊快照失效、重畫。
+   由本補丁照 :7587-7597 的閘門呼叫 `beginAppearanceRenderBridge`，所以外觀每幀照樣套上，只是不重算穿戴簽章；
+   這段期間暫換 `MirageWardrobeCore.getAppearanceSourceSignature`：同一次開橋第一次問（:5401，判斷快照新不新）時
+   回快照自己記的來源簽章，等於「上次比對後沒變」，之後再問（:5422，重拍後驗證）照原版現算。快照的版本號與乾淨外觀
+   開關照樣每次比：同步衣物（SyncClothingPacket.java:225-226）會觸發 OnClothingUpdated，上游加版本號，換衣服當下就重拍。
+   第一次看到的人把到期時間錯開到 WEAR_INTERVAL_MS 內，避免同一個 tick 一起算；走進可視範圍的那個 tick 一律到期，
+   入口重建用的是剛比對過的快照。
+   代價：不觸發 OnClothingUpdated 的變化（SyncVisuals 原地改的血跡、髒污、破洞、補丁；衣物清單晚到或被重排），
+   最多晚 WEAR_INTERVAL_MS 才讓舊快照失效；這段期間引擎若重建模型，畫出來的是舊快照，
+   要等原版每 CLEAN_APPEARANCE_MODEL_SCAN_TICKS 一輪的模型檢查看到模型換了才重拍。
 - 原版在呼叫中改寫了子集或到期表（新增、移除、換 binding），寫回完整表；中途新加的 binding 當作到期。
   整張表被換掉（session 重置）時不還原舊表，也不補開橋。
 - 原版拋錯時仍先還原完整表，再原樣重拋，不吞例外；這個 tick 不補開橋（和原版中途中止相同），也不重建模型。
 - `onCleanAppearanceTick` 沒經 `MirageWardrobeCore` 表呼叫（上游改了形狀）時換表不會發生，原版照舊處理整個子集，
-  本補丁印一行 wear throttle inactive，本次遊戲只剩範圍與畫面過濾。
+  本補丁印一行 signature throttle inactive，本次遊戲只剩範圍與畫面過濾。
 - 篩選本身出錯、非 MP 客戶端、沒有本機玩家時，直接走原版，行為與未安裝相同；沒有 `getTimestampMs` 時不節流。
 被篩掉的玩家在 `onCleanAppearanceTick` 的 `hasCurrentNetworkBinding` 會回 false，但下一段
 會改查線上玩家清單，結果一樣是「追蹤中」，行為不變；換成到期表時 `onCleanAppearanceTick` 已經跑完。
@@ -63,7 +73,9 @@ local `beginNetworkAppearanceRenderBridges`（:7582），遍歷 `MirageWardrobeC
 `beginNetworkAppearanceRenderBridges` 是否已自己加距離判斷、畫面判斷或節流（有的話本補丁退場）；
 tick 路徑內是否開始寫入 `networkAppliedBindings`（目前只有 MirageWardrobeNetwork.lua 的計分板與
 網路 handler 會寫）；橋是否仍只在 OnTick 到 OnPostRender 之間開著、`appearanceRenderBridges[player]` 是否仍記著
-開成的橋（本補丁照它判斷走進畫面的人這個 tick 有沒有開成橋、要不要重建模型）。
+開成的橋（本補丁照它判斷走進畫面的人這個 tick 有沒有開成橋、要不要重建模型）；`beginAppearanceRenderBridge` 是否仍經表
+呼叫 `getAppearanceSourceSignature`、第一次問是不是判斷快照新不新（:5401）、快照是否仍以 `activeAppearanceSnapshots[player]`
+的 `sourceSignature` 比對、換衣服是否仍經 OnClothingUpdated 加版本號（本補丁替延後的人省掉的就是第一次那一問）。
 ]]
 
 local PREFIX = "[MinidoracatServerPatchFor42][MirageWardrobe42]"
@@ -76,8 +88,9 @@ local SPREAD_SLOTS = 16 -- 第一次看到的人，到期時間依序錯開 WEAR
 local STALE_MS = 60000 -- 到期後這麼久都沒再出現在範圍內，就丟掉他的到期時間
 local PRUNE_EVERY_MS = 10000
 
--- E2E 讀：到期（允許算簽章）的人次、替延後的人開橋的次數、範圍內但在畫面外略過的人次、走進畫面重建模型的次數
-local stats = { due = 0, deferredBridges = 0, offView = 0, entryResets = 0 }
+-- E2E 讀：到期（允許算簽章）的人次、替延後的人開橋的次數、範圍內但在畫面外略過的人次、走進畫面重建模型的次數、
+-- 替延後的人省掉的來源簽章次數
+local stats = { due = 0, deferredBridges = 0, offView = 0, entryResets = 0, sourceSkips = 0 }
 local nextDue = {} -- [IsoPlayer] = 下次可以算簽章的時間（getTimestampMs）
 -- [IsoPlayer] = 上個 tick 在可視範圍內的遠端玩家：true 已開過橋，"pending" 還沒（第一次開成橋時重建模型）
 local shown = {}
@@ -86,6 +99,8 @@ local nextPrune = 0
 local throttleOn = false
 local ctx = nil -- 包裝函式呼叫原版期間的狀態
 local cleanTarget = nil -- 最近一次被暫換的 onCleanAppearanceTick（不清掉：萬一有人留著 cleanHook，照樣呼叫得到原版）
+-- 替延後的人開橋期間暫換 getAppearanceSourceSignature：原本的函式（不清掉，理由同上）、所屬的上游表、下一次問時當作沒變的人
+local sourceLive, sourceCore, assumeFor = nil, nil, nil
 
 -- 本機鏡頭的可視範圍（螢幕像素）：一格在螢幕 x 方向的像素（32 × tileScale）、畫面寬高、IsoCamera 的偏移、
 -- 以本機玩家現在的位置置中的偏移。分割畫面（每個視窗各自 render）或 API 不在時回 nil：不做畫面過濾
@@ -161,14 +176,17 @@ local function mergeBack(full, before, current)
     end
 end
 
--- 這個 tick 不算簽章的 key；回傳 key 集合與個數
-local function planDeferrals(subset, localPlayer, now)
+-- 這個 tick 不算簽章的 key；回傳 key 集合與個數。inView 是這個 tick 在可視範圍內的人（沒有畫面過濾時 nil）
+local function planDeferrals(subset, localPlayer, now, inView)
     local deferKeys, count = {}, 0
     for key, binding in pairs(subset) do
         local player = type(binding) == "table" and binding.player or nil
         if player and player ~= localPlayer then
             local due = nextDue[player]
-            if due == nil then
+            if inView and inView[player] == "pending" then -- 走進可視範圍：入口重建要用剛比對過的快照
+                nextDue[player] = now + WEAR_INTERVAL_MS
+                stats.due = stats.due + 1
+            elseif due == nil then
                 spreadSlot = spreadSlot % SPREAD_SLOTS + 1
                 nextDue[player] = now + spreadSlot * WEAR_INTERVAL_MS / SPREAD_SLOTS
                 deferKeys[key] = true
@@ -216,8 +234,24 @@ local function cleanHook(...)
     return afterClean(cleanTarget(...))
 end
 
+-- 延後的人這次開橋不重算來源簽章：第一次問（:5401，判斷快照新不新）時回快照自己記的簽章，等於上次比對後沒變；
+-- 同一次開橋再問（:5422，重拍後驗證）照原版現算。快照的版本號與乾淨外觀開關照樣比，換衣服當下就重拍
+local function sourceHook(player)
+    if player ~= nil and player == assumeFor then
+        assumeFor = nil
+        local snapshots = sourceCore.activeAppearanceSnapshots
+        local snapshot = type(snapshots) == "table" and snapshots[player] or nil
+        local signature = type(snapshot) == "table" and snapshot.sourceSignature or nil
+        if type(signature) == "string" and signature ~= "" then
+            stats.sourceSkips = stats.sourceSkips + 1
+            return signature
+        end
+    end
+    return sourceLive(player)
+end
+
 -- 照原版迴圈的閘門（MirageWardrobeCore.lua:7587-7597）替延後的人開橋，只是不算簽章
-local function bridgeDeferred(core, deferred, localPlayer, requested)
+local function bridgeEach(core, deferred, localPlayer, requested)
     local states = core.networkPlayerData or {}
     local pending = core.cleanAppearancePending or {}
     for key, binding in pairs(deferred) do
@@ -226,11 +260,25 @@ local function bridgeDeferred(core, deferred, localPlayer, requested)
         if player ~= localPlayer and type(state) == "table" and binding.state == state then
             local tracks = core.shouldTrackAppearance(player, state) == true
             if tracks or pending[player] ~= nil or requested[player] then
+                assumeFor = player
                 core.beginAppearanceRenderBridge(player)
+                assumeFor = nil
                 stats.deferredBridges = stats.deferredBridges + 1
             end
         end
     end
+end
+
+local function bridgeDeferred(core, deferred, localPlayer, requested)
+    local live = core.getAppearanceSourceSignature
+    if live == sourceHook then live = sourceLive end -- 上次沒換回：sourceHook 尾呼叫自己會卡成無窮迴圈
+    if type(live) ~= "function" then return bridgeEach(core, deferred, localPlayer, requested) end
+    sourceLive, sourceCore = live, core
+    core.getAppearanceSourceSignature = sourceHook
+    local ok, err = pcall(bridgeEach, core, deferred, localPlayer, requested)
+    assumeFor = nil
+    if core.getAppearanceSourceSignature == sourceHook then core.getAppearanceSourceSignature = live end
+    if not ok then error(err, 0) end
 end
 
 -- 剛進可視範圍的人在第一次開成橋的 tick 重建模型：IngameState 在 OnTick 之後才呼叫 ModelManager.update，
@@ -262,7 +310,7 @@ local function makeWrapper(core, original)
         local hooked = false
         local clean = core.onCleanAppearanceTick
         if throttleOn and type(clean) == "function" then
-            local planned, deferKeys, count = pcall(planDeferrals, subset, localPlayer, getTimestampMs())
+            local planned, deferKeys, count = pcall(planDeferrals, subset, localPlayer, getTimestampMs(), inView)
             if planned and count > 0 then
                 c.deferKeys = deferKeys
                 -- 原版迴圈的 requestedPlayers（:7633-7639）在 onCleanAppearanceTick 之前取
@@ -295,7 +343,7 @@ local function makeWrapper(core, original)
             bridgeDeferred(core, c.deferred, localPlayer, c.requested)
         elseif hooked then
             throttleOn = false
-            print(PREFIX .. " wear throttle inactive: onCleanAppearanceTick was not called through MirageWardrobeCore; re-check upstream.json recheck notes")
+            print(PREFIX .. " signature throttle inactive: onCleanAppearanceTick was not called through MirageWardrobeCore; re-check upstream.json recheck notes")
         end
         if inView then resetEntering(core, inView) else shown = {} end
     end
@@ -330,7 +378,7 @@ local function install(final)
     throttleOn = type(getTimestampMs) == "function"
     print(PREFIX .. " bridge filter installed (range=" .. RANGE .. ", view margin " ..
             ((IsoCamera and IsoUtils) and (VIEW_MARGIN .. "/" .. VIEW_KEEP_MARGIN) or "off: no IsoCamera") ..
-            ", wear throttle " .. (throttleOn and (WEAR_INTERVAL_MS .. "ms") or "off: no getTimestampMs") .. ")")
+            ", signature throttle " .. (throttleOn and (WEAR_INTERVAL_MS .. "ms") or "off: no getTimestampMs") .. ")")
 end
 
 install()

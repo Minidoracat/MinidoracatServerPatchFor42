@@ -279,6 +279,38 @@ local function newWorld(opts)
     core.shouldTrackAppearance = function(p) return p.tracked == true end
     core.getRemotePlayerItemVisuals = function(p) if p ~= W.localPlayer then return p.visuals end end
     core.getTransmogSourceSlot = function() return "base:test" end
+    if opts.sourceModel then
+        -- 照 :5371-5454 判斷快照新不新：版本號一樣、經表問的來源簽章（:5401）和快照記的一樣才沿用；否則重拍
+        -- （候選的簽章原版用 local 現算，:4788），再經表問一次驗證（:5422），不符就不開橋。經表的呼叫另外計數
+        local realSource = core.getAppearanceSourceSignature
+        W.sourceChecks, W.snapTaken, W.verifyFails = {}, {}, 0
+        W.countedSource = function(p)
+            W.sourceChecks[p.name] = (W.sourceChecks[p.name] or 0) + 1
+            return realSource(p)
+        end
+        W.liveSource = realSource
+        core.getAppearanceSourceSignature = W.countedSource
+        core.beginAppearanceRenderBridge = function(p)
+            W.bridged[#W.bridged + 1] = p.name
+            if W.onBridge then W.onBridge(p) end
+            local revision = core.getAppearanceRevision(p)
+            local snapshot = core.activeAppearanceSnapshots[p]
+            local signature = core.getAppearanceSourceSignature(p)
+            if not (snapshot and snapshot.revision == revision and type(signature) == "string" and
+                    snapshot.sourceSignature == signature) then
+                local candidate = { revision = revision, sourceSignature = realSource(p) }
+                if core.getAppearanceSourceSignature(p) ~= candidate.sourceSignature then
+                    W.verifyFails = W.verifyFails + 1
+                    return false
+                end
+                core.activeAppearanceSnapshots[p] = candidate
+                snapshot = candidate
+                W.snapTaken[p.name] = (W.snapTaken[p.name] or 0) + 1
+            end
+            core.appearanceRenderBridges[p] = { snapshot = snapshot }
+            return true
+        end
+    end
     core.networkAppliedBindings = core.networkAppliedBindings or {}
     W.full = core.networkAppliedBindings
     if opts.patch then
@@ -466,8 +498,9 @@ local function viewSuite()
     end
     local base, pat = walkIn(false), walkIn(true)
     local sameDrawn, drawnBridged, oSkipped, oBase, setup = true, true, true, true, false
-    local vFirstBridged, vFirstDrawn, oFirstAfterJump
+    local vFirstBridged, vFirstDrawn, oFirstAfterJump, vEntryChecked, oEntryChecked
     for _ = 1, 330 do
+        local cv, co = pat.checks.V or 0, pat.checks.O or 0
         local b, p = tick(base), tick(pat)
         local t = pat.tickNo
         if drawnKey(base) ~= drawnKey(pat) then sameDrawn = false end
@@ -480,7 +513,11 @@ local function viewSuite()
         elseif not oFirstAfterJump and has(p, "O") then
             oFirstAfterJump = t
         end
-        if not vFirstBridged and has(p, "V") then vFirstBridged = t end
+        if not vFirstBridged and has(p, "V") then
+            vFirstBridged = t
+            vEntryChecked = (pat.checks.V or 0) > cv
+        end
+        if t == 301 then oEntryChecked = (pat.checks.O or 0) > co end
         if not vFirstDrawn and pat.drawn.V then vFirstDrawn = t end
         if t == 100 then setup = pat.model[pat.P.V] == "real" and base.model[base.P.V] == "mirage" end
     end
@@ -495,6 +532,8 @@ local function viewSuite()
         #orr == 1 and orr[1] == 301 and oFirstAfterJump == 301 and pat.drawn.O == "mirage")
     check("R9 view: untracked player (never bridged) never rebuilt", pat.resets.D == nil)
     check("R9 view: offView counted", pat.filter.stats.offView > 0)
+    check("R9 view: entering players' signatures checked on the entry tick (walking in, camera jump)",
+        vEntryChecked == true and oEntryChecked == true)
 
     -- R10 在畫面邊外來回：進緩衝（離中心 19 格）後在 19、22 格（緩衝外、保留範圍內）間來回 10 次，
     -- 再退到 30 格（保留範圍外）又回來
@@ -590,7 +629,7 @@ local function realSuite()
         not base.checks.D and not base.checks.F and not pat.checks.D and not pat.checks.F)
     check("R1 throttle: out-of-range player never checked", pat.checks.E == nil)
     check("R1 throttle: installed with throttle on, no inactive warning",
-        countPrinted(pat, "wear throttle " .. interval .. "ms") == 1 and countPrinted(pat, "inactive") == 0)
+        countPrinted(pat, "signature throttle " .. interval .. "ms") == 1 and countPrinted(pat, "inactive") == 0)
 
     -- R2 髒污變化：舊快照失效的延遲
     local function propagation(W)
@@ -631,7 +670,7 @@ local function realSuite()
     for _ = 1, 70 do
         if joined(tick(base4), "E") ~= joined(tick(pat4)) then same4 = false end
     end
-    check("R4 shape changed: one 'wear throttle inactive' line", countPrinted(pat4, "wear throttle inactive") == 1)
+    check("R4 shape changed: one 'signature throttle inactive' line", countPrinted(pat4, "signature throttle inactive") == 1)
     check("R4 shape changed: same players bridged (range filter only)", same4)
     check("R4 shape changed: checked every tick (throttle off)", pat4.checks.A == 70)
 
@@ -680,6 +719,56 @@ local function realSuite()
         joined(tick(base8)) == "L" and joined(tick(pat8)) == "L")
     check("R8 session reset mid-call: new table kept", pat8.core.networkAppliedBindings == fresh)
 
+    -- R14 來源簽章（照原版判斷快照新不新的開橋）：延後的人第一次問時回快照記的簽章；
+    -- 換衣服（OnClothingUpdated 加版本號）當下重拍，清單被重排（不觸發事件）最多晚一個間隔
+    local function sourceWorld(patch)
+        local W = newWorld({ patch = patch, sourceModel = true })
+        W.localPlayer = newPlayer(W, "L", 1000, 1000)
+        W.P = { A = newPlayer(W, "A", 1003, 1000, { tracked = true }), B = newPlayer(W, "B", 1000, 1004, { tracked = true }) }
+        for name, p in pairs(W.P) do bind(W, "k" .. name, p) end
+        for _ = 1, 70 do tick(W) end -- 每個人至少比對過一次、都有快照
+        return W
+    end
+    local bs, ps = sourceWorld(false), sourceWorld(true)
+    local b0, p0, sameS = bs.sourceChecks.A, ps.sourceChecks.A, true
+    for _ = 1, 190 do if joined(tick(bs)) ~= joined(tick(ps)) then sameS = false end end
+    check("R14 source: same players bridged", sameS)
+    check("R14 source: upstream asks every tick, patch 2-4 times in ~3 s (deferred bridges reuse the snapshot's)",
+        bs.sourceChecks.A - b0 == 190 and within(ps.sourceChecks.A - p0, 2, 4) and ps.filter.stats.sourceSkips > 0)
+    check("R14 source: hook restored after the tick (UI callers get the live signature)",
+        ps.core.getAppearanceSourceSignature == ps.countedSource)
+    local function sourceDelay(W, change)
+        change(W)
+        local start = W.clock
+        for _ = 1, 100 do
+            tick(W)
+            W.core.endAppearanceRenderBridges() -- OnPostRender 收橋，之後問的才是實體衣物的簽章
+            local snap = W.core.activeAppearanceSnapshots[W.P.A]
+            if snap and snap.sourceSignature == W.liveSource(W.P.A) then return W.clock - start end
+        end
+    end
+    local function reorder(W) local l = W.P.A.list; l[1], l[2] = l[2], l[1] end
+    local function clothing(W) reorder(W); W.core.markAppearanceChanged(W.P.A) end
+    local patR = sourceDelay(sourceWorld(true), reorder)
+    check("R14 source: list reordered without OnClothingUpdated -> upstream next tick, patch within WEAR_INTERVAL_MS + 1 tick",
+        sourceDelay(sourceWorld(false), reorder) == TICK_MS and patR ~= nil and patR <= interval + TICK_MS)
+    local pc = sourceWorld(true)
+    local patC = sourceDelay(pc, clothing)
+    check("R14 source: clothing change (revision bump) -> re-snapshot on the next tick in both, verification passes",
+        sourceDelay(sourceWorld(false), clothing) == TICK_MS and patC == TICK_MS and pc.verifyFails == 0)
+    local pe = sourceWorld(true)
+    pe.onBridge = function(p)
+        if p == pe.P.B and pe.core.getAppearanceSourceSignature ~= pe.countedSource then error("boom-src", 0) end
+    end
+    local okE, errE
+    for _ = 1, 10 do
+        okE, errE = pcall(tick, pe)
+        if not okE then break end
+    end
+    check("R14 source: error in a deferred bridge propagates; hook and full table restored",
+        not okE and errE == "boom-src" and pe.core.getAppearanceSourceSignature == pe.countedSource and
+        pe.core.networkAppliedBindings == pe.full)
+
     viewSuite()
 end
 
@@ -694,7 +783,8 @@ if arg and arg[1] == "--mutants" then
         { name = "延後開橋漏掉 requested", from = "or requested[player] then", to = "then" },
         { name = "第一次看到的人不錯開", from = "nextDue[player] = now + spreadSlot * WEAR_INTERVAL_MS / SPREAD_SLOTS", to = "nextDue[player] = now" },
         { name = "到期晚一個間隔", from = "elseif now >= due or", to = "elseif now >= due + WEAR_INTERVAL_MS or" },
-        { name = "比對後不重設到期", from = "nextDue[player] = now + WEAR_INTERVAL_MS\n", to = "nextDue[player] = now\n" },
+        { name = "比對後不重設到期", from = "nextDue[player] = now + WEAR_INTERVAL_MS\n                stats.due = stats.due + 1\n            else\n",
+          to = "nextDue[player] = now\n                stats.due = stats.due + 1\n            else\n" },
         { name = "系統時間往回調就卡住", from = " or due - now > WEAR_INTERVAL_MS then", to = " then" },
         { name = "中途新加的 binding 也延後", from = "if c.deferKeys[key] and c.before[key] == binding then", to = "if c.deferKeys[key] or c.before[key] == nil then" },
         { name = "不換回完整表", from = "core.networkAppliedBindings = full", to = "local _ = full" },
@@ -709,6 +799,13 @@ if arg and arg[1] == "--mutants" then
         { name = "忽略樓層", from = "- 3 * math.floor(player:getZ())", to = "- 0" },
         { name = "分割畫面也篩", from = "getNumActivePlayers() > 1 then", to = "getNumActivePlayers() > 9 then" },
         { name = "只看 IsoCamera 的偏移", from = "inRect(sx, sy, nowX, nowY, width, height, unit, pad)", to = "false" },
+        { name = "走進畫面不算到期", from = "if inView and inView[player] == \"pending\" then", to = "if false then" },
+        { name = "延後的人照算來源簽章", from = "core.getAppearanceSourceSignature = sourceHook", to = "local _ = sourceHook" },
+        { name = "來源簽章不只省第一問", from = "        assumeFor = nil\n        local snapshots", to = "        local snapshots" },
+        { name = "不還原來源簽章函式", from = "if core.getAppearanceSourceSignature == sourceHook then core.getAppearanceSourceSignature = live end", to = "" },
+        { name = "延後開橋出錯不還原", from = "local ok, err = pcall(bridgeEach, core, deferred, localPlayer, requested)",
+          to = "bridgeEach(core, deferred, localPlayer, requested); local ok, err = true" },
+        { name = "吞掉延後開橋的例外", from = "    if not ok then error(err, 0) end\nend", to = "end" },
     }
     rawPrint("== 突變（每個都應至少讓一項 FAIL）")
     local survived = 0
