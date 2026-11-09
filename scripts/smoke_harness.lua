@@ -123,6 +123,63 @@ lines = loadGuard({ "MinidoracatServerPatchFor42", "damnlib" })
 check(addVehicleDebug == engineAdd and MSP_UnplacedVehicleGuard == nil, "不換全域、不設全域表")
 check(#lines == 0, "不印任何 log")
 
+-- damnlib 胎壓補丁（server/Patches/damnlib/MSP_DamnTirePressure.lua）：接受上游客戶端會送的補胎請求。上游真檔差分在
+-- scripts/test_damn_tire_pressure.lua；這裡用假引擎跑真補丁，守住安裝條件與「坐在哪台車就只補哪台」。
+local TIRE = MEDIA .. "/server/Patches/damnlib/MSP_DamnTirePressure.lua"
+local function loadTire(mods)
+    local set = {}
+    for _, id in ipairs(mods) do set[id] = true end
+    function getActivatedMods() return { contains = function(_, id) return set[id] == true end } end
+    MSP_DamnTirePressure = nil
+    for i = #clientCommandHandlers, 1, -1 do clientCommandHandlers[i] = nil end
+    local out, realPrint = {}, print
+    print = function(...) out[#out + 1] = table.concat({ ... }, " ") end
+    local ok, err = pcall(dofile, TIRE)
+    print = realPrint
+    if not ok then error(err) end
+    return out
+end
+local function ctisCar(id, pressure)
+    local tire = { amount = pressure, synced = 0 }
+    function tire:getContainerContentAmount() return self.amount end
+    function tire:setContainerContentAmount(a) self.amount = math.min(a, 50) end
+    local car = {}
+    function car:getId() return id end
+    function car:isEngineRunning() return true end
+    function car:getScript() return { getFullName = function() return "Base.92amgeneralM998" end } end
+    function car:getPartById(part)
+        if part == "TireFrontLeft" then return tire end
+        if part == "RFsystem" or part == "CTIsystem" then return {} end
+    end
+    function car:transmitPartModData() tire.synced = tire.synced + 1 end
+    function car:isDriver(p) return p.seat == 0 end
+    return car, tire
+end
+local function sendTire(player, args)
+    for _, fn in ipairs(clientCommandHandlers) do fn("vehicle", "setContainerContentAmount", player, args) end
+end
+
+print("情境三：damnlib 在場，駕駛送 CTIS 補胎")
+lines = loadTire({ "damnlib", "MinidoracatServerPatchFor42" })
+check(#clientCommandHandlers == 1 and #lines == 1 and lines[1]:find("tire pressure fix installed", 1, true) ~= nil,
+    "註冊一個處理器、印一行 installed")
+local mine, mineTire = ctisCar(1, 10)
+local _, otherTire = ctisCar(2, 10)
+local driver = { seat = 0, getVehicle = function() return mine end }
+local passenger = { seat = 1, getVehicle = function() return mine end }
+sendTire(driver, { vehicle = 2, part = "TireFrontLeft", amount = 35 })
+check(otherTire.amount == 10 and mineTire.amount == 10, "目標是別台車：兩台都不動")
+sendTire(driver, { vehicle = 1, part = "TireFrontLeft", amount = 40 })
+check(mineTire.amount == 10, "數值不是 35：不動")
+sendTire(passenger, { vehicle = 1, part = "TireFrontLeft", amount = 35 })
+check(mineTire.amount == 10, "乘客送的：不動")
+sendTire(driver, { vehicle = 1, part = "TireFrontLeft", amount = 35 })
+check(mineTire.amount == 35 and mineTire.synced == 1, "駕駛、數值 35：補到 35、同步一次")
+
+print("情境四：damnlib 缺席＝零行為")
+lines = loadTire({ "MinidoracatServerPatchFor42", "rSemiTruck" })
+check(#clientCommandHandlers == 0 and MSP_DamnTirePressure == nil and #lines == 0, "不註冊、不設全域表、不印 log")
+
 print()
 if failures > 0 then
     print(failures .. " 項失敗")

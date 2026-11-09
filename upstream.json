@@ -61,12 +61,13 @@
       "wid": "3171167894",
       "mod_id": "damnlib",
       "name": "that DAMN Library",
-      "acked_time_updated": 1793302994,
+      "acked_time_updated": 1793732046,
       "patches": [
         "server/Patches/damnlib/MSP_DamnSpawnIndex.lua",
-        "shared/Patches/MSP_ChunkSquareDispatch.lua"
+        "shared/Patches/MSP_ChunkSquareDispatch.lua",
+        "server/Patches/damnlib/MSP_DamnTirePressure.lua"
       ],
-      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare、仍是 DAMN_Spawns.lua 唯一的 LoadGridsquare 註冊且仍在 OnInitGlobalModData 內（補丁以檔名攔下它、改由 LoadChunk 只對索引命中格子呼叫；檔名或路徑改了要改 UPSTREAM_FILE）；checkSquare 是否仍在 spawnerDebug 關閉時把「被阻擋」也 remember（:165-184，LoadChunk 時點差異的後果取決於此）；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場",
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本人工比對。核對檔 42.20/media/lua/server/DAMN_Spawns.lua sha256 前 12 碼 b77ae1f8adea。checkSquare 是否仍只在 byLocation[tostring(x)..'_'..tostring(y)] 查得到時才做事、查不到回 true；byLocation 是否仍只由 addInternal 寫入（鍵仍是 tostring(x)..'_'..tostring(y)）；LoadGridsquare 閉包是否仍只呼叫 DAMN.Spawns:checkSquare、仍是 DAMN_Spawns.lua 唯一的 LoadGridsquare 註冊且仍在 OnInitGlobalModData 內（補丁以檔名攔下它、改由 LoadChunk 只對索引命中格子呼叫；檔名或路徑改了要改 UPSTREAM_FILE）；checkSquare 是否仍在 spawnerDebug 關閉時把「被阻擋」也 remember（:165-184，LoadChunk 時點差異的後果取決於此）；若新增高於 42.20 的版本目錄要改看那一份；作者若改成數字鍵或自己加座標過濾，本補丁退場。MSP_DamnTirePressure：跑 lua scripts/test_damn_tire_pressure.lua --mutants（直接載入本機副本 shared 的 DAMN_Shared、DAMN_Helpers、DAMN_Armor_Shared、DAMN_Parts 與 client 的 DAMN_Armor_Client、DAMN_Client；前提項比對版本目錄、tireCTISPressure 與輪胎清單）；另看 DAMN.Parts:setContainerAmount 是否仍送原版 vehicle.setContainerContentAmount（DAMN_Parts.lua:463-469）、CTIS 是否仍要 RFsystem＋CTIsystem＋引擎發動＋低於 tireCTISPressure、OnEnterVehicle 是否仍不分座位；上游改用自己的伺服器指令補胎、或原版 setContainerContentAmount 拿掉 UseMechanicsCheat 時，本補丁退場",
       "watch_files": [],
       "acked_title": "that DAMN Library"
     },
@@ -501,9 +502,10 @@
       "acked_time_updated": 1770319578,
       "patches": [
         "client/Patches/MSP_KI5SkeletonTrim.lua",
-        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+        "client/Patches/MSP_KI5SkeletonTrimData.lua",
+        "server/Patches/damnlib/MSP_DamnTirePressure.lua"
       ],
-      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt。MSP_DamnTirePressure：跑 lua scripts/test_damn_tire_pressure.lua --mutants（載入本機副本的 client/85chevyCaprice_armor.lua；前提項比對版本目錄、DAMN.Armor:add 登記的車種與補丁 ARMOR 清單、每個車種的 temp tire fix 是否仍是「低於 1 補到 35」）；車種有增減就同步補丁的 ARMOR 清單與行號註解，版本目錄變了就改測試的 CARS 與補丁註解",
       "watch_files": [],
       "acked_title": "'85 Chevrolet Caprice / Impala"
     },
@@ -566,9 +568,10 @@
       "acked_time_updated": 1793038894,
       "patches": [
         "client/Patches/MSP_KI5SkeletonTrim.lua",
-        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+        "client/Patches/MSP_KI5SkeletonTrimData.lua",
+        "server/Patches/damnlib/MSP_DamnTirePressure.lua"
       ],
-      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt。MSP_DamnTirePressure：跑 lua scripts/test_damn_tire_pressure.lua --mutants（載入本機副本的 client/89defender_armor.lua；前提項比對版本目錄、DAMN.Armor:add 登記的車種與補丁 ARMOR 清單、每個車種的 temp tire fix 是否仍是「低於 1 補到 35」）；車種有增減就同步補丁的 ARMOR 清單與行號註解，版本目錄變了就改測試的 CARS 與補丁註解",
       "watch_files": [],
       "acked_title": "'89 LAND ROVER Defender"
     },
@@ -618,9 +621,10 @@
       "acked_time_updated": 1786648418,
       "patches": [
         "client/Patches/MSP_KI5SkeletonTrim.lua",
-        "client/Patches/MSP_KI5SkeletonTrimData.lua"
+        "client/Patches/MSP_KI5SkeletonTrimData.lua",
+        "server/Patches/damnlib/MSP_DamnTirePressure.lua"
       ],
-      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt",
+      "recheck": "上游宣告 On Lockdown，repo 不留內容快照（watch_files 留空），以本機 Steam 副本重算。MSP_KI5SkeletonTrim：--ack 前先確認本機副本就是 Steam 最新版（Steam API time_updated＝本機 steamapps/workshop/appworkshop_108600.acf 的 timeupdated，不一致先讓 Steam 更新、不要 ack）；依序跑 python scripts/ki5trim/build.py --check、python scripts/ki5trim/verify.py、python scripts/ki5trim/verify.py --mutations、lua scripts/test_ki5_skeleton_trim.lua --mutants，全綠就 --ack；--check 有差（上游改了模型／車輛腳本或重新匯出 FBX）就跑 python scripts/ki5trim/build.py 重產，重跑 verify.py 與 Lua 測試、commit manifest 與資料表後再 --ack，發布前 FBX 要在本機重產（verify_mod.py 會擋）；verify.py FAIL 時看是哪一組、哪一項不等價，修工具或排除該組，不得放寬閘門；KI5 新增高於 42.21 的版本目錄時改 scripts/ki5trim/pzscripts.py 的 PZ_VERSION；正式服 MOD 清單變了就更新 scripts/ki5trim/prodmods.txt。MSP_DamnTirePressure：跑 lua scripts/test_damn_tire_pressure.lua --mutants（載入本機副本的 client/69charger_armor.lua；前提項比對版本目錄、DAMN.Armor:add 登記的車種與補丁 ARMOR 清單、每個車種的 temp tire fix 是否仍是「低於 1 補到 35」）；車種有增減就同步補丁的 ARMOR 清單與行號註解，版本目錄變了就改測試的 CARS 與補丁註解",
       "watch_files": [],
       "acked_title": "'69 Dodge Charger"
     },
