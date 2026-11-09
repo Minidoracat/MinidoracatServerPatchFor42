@@ -96,13 +96,11 @@ local function fetchJava()
     local metatables = __classmetatables
     local square = metatables[IsoGridSquare.class].__index
     local array = metatables[ArrayList.class].__index
-    local pz = metatables[PZArrayList.class].__index
     local java = {
         getWorldObjects = square.getWorldObjects, getObjectContainers = square.getObjectContainers,
-        arrayIsEmpty = array.isEmpty, listIsEmpty = pz.isEmpty, listClear = pz.clear,
-        found = PZArrayList.new(ItemContainer.class, 4),
+        isEmpty = array.isEmpty, clear = array.clear, found = ArrayList.new(),
     }
-    for _, key in ipairs({ "getWorldObjects", "getObjectContainers", "arrayIsEmpty", "listIsEmpty", "listClear", "found" }) do
+    for _, key in ipairs({ "getWorldObjects", "getObjectContainers", "isEmpty", "clear", "found" }) do
         if java[key] == nil then return nil end
     end
     return java
@@ -131,7 +129,7 @@ if not fetched or not java then
     return
 end
 local getWorldObjects, getObjectContainers = java.getWorldObjects, java.getObjectContainers
-local arrayIsEmpty, listIsEmpty, listClear, found = java.arrayIsEmpty, java.listIsEmpty, java.listClear, java.found
+local isEmpty, clear, found = java.isEmpty, java.clear, java.found
 
 local upstream -- vfx_squareload.lua 的 onLoadGridsquare
 local squareLoad -- VFX.SquareLoad（讀 Debug、isListening）
@@ -139,10 +137,10 @@ local slim = true -- 沙盒關閉時 false：包裝留在原位、每格照樣�
 local swallow = true -- 換回上游原樣後 false：上游再 Add 時照樣交給引擎
 
 local function onSquare(square)
-    if slim and arrayIsEmpty(getWorldObjects(square)) and not squareLoad.Debug then
+    if slim and isEmpty(getWorldObjects(square)) and not squareLoad.Debug then
         getObjectContainers(square, nil, nil, found)
-        if listIsEmpty(found) then return end
-        listClear(found)
+        if isEmpty(found) then return end
+        clear(found)
     end
     return upstream(square)
 end

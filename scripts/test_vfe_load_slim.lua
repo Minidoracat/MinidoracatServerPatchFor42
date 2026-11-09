@@ -152,10 +152,9 @@ function Square:getObjectContainers(_, _, list)
     end
 end
 
-IsoGridSquare, ArrayList, ItemContainer = { class = "C:IsoGridSquare" }, { class = "C:ArrayList" }, { class = "C:ItemContainer" }
-PZArrayList = { class = "C:PZArrayList", new = function() return newList() end }
-local CLASS_METATABLES = { ["C:IsoGridSquare"] = { __index = Square }, ["C:ArrayList"] = { __index = List },
-    ["C:PZArrayList"] = { __index = List } }
+IsoGridSquare = { class = "C:IsoGridSquare" }
+ArrayList = { class = "C:ArrayList", new = function() return newList() end }
+local CLASS_METATABLES = { ["C:IsoGridSquare"] = { __index = Square }, ["C:ArrayList"] = { __index = List } }
 
 function isServer() return S.server end
 function isClient() return not S.server end
@@ -461,12 +460,12 @@ if ARGS["--mutants"] and upstreamCurrent then
     rawPrint("\n突變測試（每個突變都必須讓上面至少一項失敗）")
     local MUTANTS = {
         { name = "沒有地上物品就略過（漏掉只有容器的格子）",
-            edits = { { from = "if listIsEmpty(found) then return end", to = "do return end" } } },
+            edits = { { from = "if isEmpty(found) then return end", to = "do return end" } } },
         { name = "只看容器（漏掉只有地上物品的格子）",
-            edits = { { from = "arrayIsEmpty(getWorldObjects(square)) and not squareLoad.Debug then",
+            edits = { { from = "isEmpty(getWorldObjects(square)) and not squareLoad.Debug then",
                 to = "not squareLoad.Debug then" } } },
         { name = "Debug 開著也略過", edits = { { from = " and not squareLoad.Debug", to = "" } } },
-        { name = "收完容器不清空清單", edits = { { from = "listClear(found)", to = "local _ = found" } } },
+        { name = "收完容器不清空清單", edits = { { from = "clear(found)", to = "local _ = found" } } },
         { name = "上游再 Add 時又交給引擎", edits = { { from = "if upstream then return swallow and fn == upstream end",
             to = "if upstream then return false end" } } },
         { name = "換回上游後仍吞掉上游的 Add", edits = { { from = "swallow = false", to = "local _ = false" } } },
